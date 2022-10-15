@@ -167,3 +167,6 @@ int main(int argv, char **args)
 
     return 0;
 }
+void code(){
+    
+}
