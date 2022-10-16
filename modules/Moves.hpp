@@ -196,7 +196,9 @@ this->rook(0,1,b);
       this->moves[totalmoves]=Box(this->position.x,this->position.y-2);
       totalmoves+=1;
     }
-    if((b.castling[b.currentTurn][0])&&(b.ifRowBlank(!b.currentTurn*7,6,7))){
+
+    if((b.castling[b.currentTurn][0])&&(b.ifRowBlank(!b.currentTurn*7,5,6))){
+    
       this->moves[totalmoves]=Box(this->position.x,this->position.y+2);
       totalmoves+=1;
 
@@ -230,21 +232,21 @@ void ChessPiece :: generateLegalMoves(Board &b){
 
     }
     else if(this->rank==6){
-       displacement=sqrt(pow((this->position.x-moves[k].x),2)+pow((this->position.y-moves[k].y),2));
+      //  displacement=sqrt(pow((this->position.x-moves[k].x),2)+pow((this->position.y-moves[k].y),2));
     
-       if(displacement==2){
-        for(int i=0;i<k;i++){
-          if(moves[i]==Box(moves[k].x,(0.25*(moves[k].y-2))+3)){
-            Box(moves[k].x,(0.25*(moves[k].y-2))+3).display();
-            displacement=0;
-            break;
-          }
-        }
-        if(displacement!=0){
-          this->removeMoves(k);
-          k-=1;
-        }
-       }
+      //  if(displacement==2){
+      //   for(int i=0;i<k;i++){
+      //     if(moves[i]==Box(moves[k].x,(0.25*(moves[k].y-2))+3)){
+      //       Box(moves[k].x,(0.25*(moves[k].y-2))+3).display();
+      //       displacement=0;
+      //       break;
+      //     }
+      //   }
+      //   if(displacement!=0){
+      //     this->removeMoves(k);
+      //     k-=1;
+      //   }
+      //  }
     }
 
 
