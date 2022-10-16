@@ -10,7 +10,7 @@ GAMESTATE
 
 class Engine{
     Board b;
-    char gameState;
+    int gameState;
     bool check;
     bool PawnPromotion;
     bool castling;
@@ -19,6 +19,9 @@ class Engine{
     Box currentMove;
 
     public:
+    int get_gameState(){
+        return gameState;
+    }
     Board * get_board(){
         return &b;
     }
@@ -66,6 +69,7 @@ class Engine{
            }
            b.generateMoves();
                 if(b.countMoves()==0){
+               
                         this->gameState=0;
                     if(this->check){
                         if(b.get_turn()==0){
@@ -141,6 +145,8 @@ b.get_chesspiece(x,y).promoteTo(prom);
                    }
                    else{
                        std::cout << "INVALID MOVES" << std :: endl;
+                       this->gameState=1;    
+                    return;
                        
                    }
                      
@@ -150,10 +156,10 @@ b.get_chesspiece(x,y).promoteTo(prom);
                  currentMove=Box(x,y);  
                  b.switch_turn();
         
-                 
                     this->gameState=1;        
+                display_state();     
         }
-        void piece_selection(int x,int y){
+        void piece_selection(int y,int x){
                 this->gameState=2;
                 PawnPromotion=false;
                  ChessPiece pice;
@@ -178,7 +184,9 @@ b.get_chesspiece(x,y).promoteTo(prom);
 
 
                  }
-              
+              else{
+                    this->gameState=1;
+                    }
                 }
                 else{
                     std::cout << "INVALID SELECTION" << std :: endl;
