@@ -54,6 +54,7 @@ class ChessPiece{
     bool castling;
     friend class Board;
     friend class Engine;
+    friend class GameScreen;
     public:
 
       int totalmoves;

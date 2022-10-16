@@ -11,9 +11,7 @@ class GameScreen : public Screen
 
     public:
     GameScreen(Window *);
-    GameScreen(){
-        win=nullptr;
-    }
+    GameScreen();
     void set_window(Window *);
     void render();
         void event_handle(){
@@ -22,5 +20,6 @@ class GameScreen : public Screen
     }
     void create_chess_board();
     void create_rectangle(int,int,SDL_Renderer*&);
+    void render_chesspiece(int,int,int,int);
        
 };

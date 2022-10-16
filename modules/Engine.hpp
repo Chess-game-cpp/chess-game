@@ -19,7 +19,9 @@ class Engine{
     Box currentMove;
 
     public:
-
+    Board * get_board(){
+        return &b;
+    }
     Box * get_rookPositon(){
         return &rookPosition;
     }
