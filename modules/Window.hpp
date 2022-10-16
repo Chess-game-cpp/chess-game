@@ -36,7 +36,7 @@ public:
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         g.set_window(this);
         screen= &g;
-        SDL_RenderPresent(render);
+    
     
         while (1)
         {

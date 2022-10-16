@@ -11,62 +11,79 @@ GAMESTATE
 class Engine{
     Board b;
     char gameState;
-    char check;
+    bool check;
     bool PawnPromotion;
     bool castling;
     Box rookPosition;
     ChessPiece currentPiece;
     Box currentMove;
-    
+
     public:
+
+    Box * get_rookPositon(){
+        return &rookPosition;
+    }
+    bool is_castling(){
+        return castling;
+    }
+    bool is_pawnPromotion(){
+        return PawnPromotion;;
+    }
+    bool is_checkmate(){
+        return check;
+    }
+    ChessPiece * get_currentChecePiece(){
+        return &currentPiece;
+    }
+    Box * get_currentMove(){
+        return &currentMove;
+    }
+    
         Engine(){
             gameState=1;
             check=0;
             PawnPromotion=false;
             castling=false;
-      
+            b.generateMoves();
+
      
 
         }   
-        // void game_loop(){
-        //     while(this->gameState!=0){
-        //         if(b.get_turn()==0){
-        //             std::cout << "White's Turn" << std :: endl;
-        //         }              
-        //         else{
-        //             std::cout << "Black's Turn" << std :: endl;
+        void display_state(){
+            
+                   if(b.get_turn()==0){
+                     std::cout << "White's Turn" << std :: endl;
+                 }              
+                 else{
+                 std::cout << "Black's Turn" << std :: endl;
 
-        //         }
-        //         if(this->check==1){
-        //             std::cout << "CHECKMATE!!!!" << std :: endl;
+                 }
+             if(this->check==1){
+                 std::cout << "CHECKMATE!!!!" << std :: endl;
                     
-        //         }
-        //         b.print_board();
-        //         b.generateMoves();
-        //         if(b.countMoves()==0){
-        //                 this->gameState=0;
-        //             if(this->check){
-        //                 if(b.get_turn()==0){
-        //                     std:: cout << "BLACK WINS!!";
-        //                 }
-        //                 else{
-        //                     std:: cout << "WHITE WINS!!";
+           }
+           b.generateMoves();
+                if(b.countMoves()==0){
+                        this->gameState=0;
+                    if(this->check){
+                        if(b.get_turn()==0){
+                            std:: cout << "BLACK WINS!!";
+                        }
+                        else{
+                            std:: cout << "WHITE WINS!!";
 
-        //                 }
-        //             }
-        //             else{
-        //                     std:: cout << "STALEMATE";
-        //             }
-        //             break;
+                        }
+                    }
+                    else{
+                            std:: cout << "STALEMATE";
+                    }
+                
 
-        //         }
-
-        //         this->piece_selection();
-        //         b.switch_turn();
+                }
 
 
-
-        //     }
+        }
+     
 
         // }
         void promote_pawn(int x,int y,int prom){
@@ -78,6 +95,7 @@ b.get_chesspiece(x,y).promoteTo(prom);
             castling=false;
                bool available;
                 Box current;
+                ChessPiece &pice=currentPiece;
           
            
       
@@ -94,17 +112,17 @@ b.get_chesspiece(x,y).promoteTo(prom);
                    if(available){
                     this->check=b.move_piece(pice,current);
                     castling=true;
-                    if(piece.rank==6 && sqrt(pow((piece.position.x-current.x),2)+pow((piece.position.y-current.y),2))==2){
+                    if(pice.rank==6 && sqrt(pow((pice.position.x-current.x),2)+pow((pice.position.y-current.y),2))==2){
                         //castling is true/
                         castling=true;
-            rookPosition.x=!b.get_turn()*7
-                        if(piece.position.y>current.y){
+            rookPosition.x=!b.get_turn()*7;
+                        if(pice.position.y>current.y){
 
-                            rookPosition.y=0
+                            rookPosition.y=0;
             
             }
             else{
-            rookPosition.y=7
+            rookPosition.y=7;
             }
                     }
                     if(pice.rank==1 && (current.x==0|current.x==7)){
@@ -117,7 +135,7 @@ b.get_chesspiece(x,y).promoteTo(prom);
                         
                     }
                  
-                    break;
+                    // break;
                    }
                    else{
                        std::cout << "INVALID MOVES" << std :: endl;
@@ -128,7 +146,10 @@ b.get_chesspiece(x,y).promoteTo(prom);
 
                 }
                  currentMove=Box(x,y);  
-                    this->gameState=1;         
+                 b.switch_turn();
+        
+                 
+                    this->gameState=1;        
         }
         void piece_selection(int x,int y){
                 this->gameState=2;
