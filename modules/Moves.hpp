@@ -73,9 +73,7 @@ void ChessPiece :: generatepseudoMoves(Board &b){
        if(b.chessBoard[x][y].rank==0){
         moves[totalmoves]=Box(x,y);
         totalmoves+=1;
-       }
-
-       if(this->position.x==(6-(this->color*5))){
+              if(this->position.x==(6-(this->color*5))){
         x=this->position.x-2+(4*this->color);
         y=this->position.y;
        if(b.chessBoard[x][y].rank==0){
@@ -83,6 +81,9 @@ void ChessPiece :: generatepseudoMoves(Board &b){
         totalmoves+=1;
        }
        }
+       }
+
+ 
 
        //left // right
        x=this->position.x-1+(2*this->color);
@@ -227,7 +228,8 @@ void ChessPiece :: generateLegalMoves(Board &b){
       this->removeMoves(k);
       k-=1;
 
-    }else if(this->rank==6){
+    }
+    else if(this->rank==6){
        displacement=sqrt(pow((this->position.x-moves[k].x),2)+pow((this->position.y-moves[k].y),2));
     
        if(displacement==2){

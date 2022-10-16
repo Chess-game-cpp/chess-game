@@ -73,8 +73,9 @@ public:
             default:
                 break;
             }
-            screen->event_handle();
+            
         }
+            screen->event_handle(e);
     }
     bool init()
     {
