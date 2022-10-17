@@ -70,6 +70,7 @@ void ChessPiece :: generatepseudoMoves(Board &b){
        //forward movement
        x=this->position.x-1+(2*this->color);
        y=this->position.y;
+       
        if(b.chessBoard[x][y].rank==0){
         moves[totalmoves]=Box(x,y);
         totalmoves+=1;
@@ -88,15 +89,21 @@ void ChessPiece :: generatepseudoMoves(Board &b){
        //left // right
        x=this->position.x-1+(2*this->color);
        y=this->position.y-1;
+       if(y>0){
        if((b.chessBoard[x][y].rank!=0 && b.chessBoard[x][y].color!=this->color)||b.enpasant==Box(x,y)){
         moves[totalmoves]=Box(x,y);
         totalmoves+=1;
      
        }
+      
+       }
        y=this->position.y+1;
+       if(y<=7){
+
        if((b.chessBoard[x][y].rank!=0 && b.chessBoard[x][y].color!=this->color)||b.enpasant==Box(x,y)){
         moves[totalmoves]=Box(x,y);
         totalmoves+=1;
+       }
        }
       break;
     case 2:
