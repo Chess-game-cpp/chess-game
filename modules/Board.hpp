@@ -54,7 +54,9 @@ class Board{
     public:
 
       Board(){
-        parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+        parse_fen("8/PPPPPPPP/8/4k3/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+        // parse_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+        // parse_fen("rnbqkbnr/pppppppp/8/8/8/8/pPPPPPPP/1NBQKBNR w KQkq -");
         // parse_fen("rnbqkbnr/1ppppppp/p7/4P3/8/8/PPPP1PPP/RNBQKBNR b kqKQ -");
         // parse_fen("rnbqkbnr/1ppppppp/p2r4/4P3/8/8/P4PPP/R3KBNR w kqKQ -");
         // parse_fen("rnbqkbnr/1ppppppp/8/p7/8/4PQ2/PPPP1PPP/RNB1KBNR b");
@@ -168,7 +170,7 @@ class Board{
         }
         return Box();
       }
-      ChessPiece get_chesspiece(int x,int y){
+      ChessPiece & get_chesspiece(int x,int y){
         return chessBoard[x][y];
 
       }

@@ -65,6 +65,10 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r,int color=0)
         SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
 
     }
+    else if(color==6){
+        SDL_SetRenderDrawColor(r, 240, 240, 240, 255);
+
+    }
     SDL_RenderFillRect(r, &rect); // create_rect
     SDL_SetRenderDrawColor(r, 255, 255, 255,255);
 }
@@ -89,7 +93,7 @@ void GameScreen::render()
     ChessPiece p;
     if(game.get_gameState()==1){
       if(game.is_checkmate()){
-                Box b=game.get_board()->get_king_position(game.get_board()->currentTurn);
+        Box b=game.get_board()->get_king_position(game.get_board()->currentTurn);
         create_rectangle(b.y,b.x,win->render,4);
                 
             }
@@ -131,18 +135,21 @@ for (int i = 0; i < 8; i++)
             if (p.rank != 0)
             {
                 if(game.get_gameState()==2 && dragging==true && i==game.get_currentChecePiece()->position.x && j==game.get_currentChecePiece()->position.y)continue;
-                
-              
-
-
-
-                
                 render_chesspiece(win->offsetY + (i * (win->size / 8)), win->offsetX + (j * (win->size / 8)), abs(p.rank - 6), p.color);
             }
         }
     }
     if(dragging && game.get_gameState()==2){
            render_chesspiece(mousePos.x-(win->size/16), mousePos.y-(win->size/16), abs(game.get_currentChecePiece()->rank - 6), game.get_currentChecePiece()->color);
+    }
+    if(game.get_gameState()==3){
+        //pawnpromotion query
+        for(int i=0;i<4;i++){
+            int x=game.get_currentMove()->y;
+            int y=((game.get_currentMove()->x/7)*4)+i;
+             create_rectangle(x,y,win->render,6);
+             render_chesspiece(win->offsetY + (y * (win->size / 8)), win->offsetX + (x * (win->size / 8)), abs(i+2 - 6),game.get_currentChecePiece()->color);
+        }
     }
     SDL_RenderPresent(win->render);
 }
@@ -176,6 +183,21 @@ void GameScreen::event_handle(SDL_Event &e)
         x = (x - win->offsetX) / (win->size / 8);
         y = (y - win->offsetY) / (win->size / 8);
       
+        if(game.get_gameState()==3){
+            //pawn promotion handler
+            for(int i=0;i<4;i++){
+            int m=game.get_currentMove()->y;
+            int n=((game.get_currentMove()->x/7)*4)+i;
+            if(m==x && n==y){
+                game.promote_pawn(i+2);
+                break;
+            }
+         
+        }
+            render();
+            break;
+        }
+       
         if(x>=0 && x<8 && y>=0 && y<8 ){
         if(dragging) break;
 
@@ -208,8 +230,10 @@ void GameScreen::event_handle(SDL_Event &e)
                 
                }else{
 
-                game.piece_move(y,x);           
+                game.piece_move(y,x,false);           
+               
                }
+               
          }
          render();
          break;

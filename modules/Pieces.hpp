@@ -96,7 +96,7 @@ class ChessPiece{
       void rook(int,int,Board &);
       void removeMoves(int);
       void promoteTo(int rank){
-        this->rank=rank+1;
+        this->rank=rank;
 
       }
      
