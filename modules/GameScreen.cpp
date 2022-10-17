@@ -6,14 +6,15 @@ using namespace std;
 GameScreen::GameScreen()
 {
     win = nullptr;
+    dragging=false;
 }
 void GameScreen::create_chess_board()
 {
     win->size = win->width > win->height ? win->height : win->width;
     win->offsetX = win->width > win->height ? (win->width - win->height) / 2 : 0;
     win->offsetY = win->width < win->height ? (win->height - win->width) / 2 : 0;
-    // SDL_RenderClear(win->render);
-    SDL_RenderPresent(win->render);
+    SDL_RenderClear(win->render);
+    // SDL_RenderPresent(win->render);
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -64,8 +65,8 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r,int color=0)
         SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
 
     }
-    // SDL_SetRenderDrawColor(r, 0, 255, 255,255);
     SDL_RenderFillRect(r, &rect); // create_rect
+    SDL_SetRenderDrawColor(r, 255, 255, 255,255);
 }
 GameScreen::GameScreen(Window *win)
 {
@@ -101,6 +102,7 @@ void GameScreen::render()
     }
 
     else if(game.get_gameState()==2){
+      
         if(game.is_checkmate()){
                 Box b=game.get_board()->get_king_position(game.get_board()->currentTurn);
         create_rectangle(b.y,b.x,win->render,4);
@@ -128,10 +130,19 @@ for (int i = 0; i < 8; i++)
             p = (game.get_board())->chessBoard[i][j];
             if (p.rank != 0)
             {
+                if(game.get_gameState()==2 && dragging==true && i==game.get_currentChecePiece()->position.x && j==game.get_currentChecePiece()->position.y)continue;
+                
+              
 
-                render_chesspiece(i, j, abs(p.rank - 6), p.color);
+
+
+                
+                render_chesspiece(win->offsetY + (i * (win->size / 8)), win->offsetX + (j * (win->size / 8)), abs(p.rank - 6), p.color);
             }
         }
+    }
+    if(dragging && game.get_gameState()==2){
+           render_chesspiece(mousePos.x-(win->size/16), mousePos.y-(win->size/16), abs(game.get_currentChecePiece()->rank - 6), game.get_currentChecePiece()->color);
     }
     SDL_RenderPresent(win->render);
 }
@@ -143,8 +154,8 @@ void GameScreen::render_chesspiece(int x, int y, int rank, int color)
     rect.y = color * 80;
     rect.w = 80;
     rect.h = 80;
-    rect2.x = win->offsetX + (y * (win->size / 8));
-    rect2.y = win->offsetY + (x * (win->size / 8));
+    rect2.x = y;
+    rect2.y = x;
     rect2.w = win->size / 8;
     rect2.h = win->size / 8;
     SDL_RenderCopy(win->render, texture, &rect, &rect2);
@@ -154,21 +165,76 @@ void GameScreen::event_handle(SDL_Event &e)
 {
     // mouse click event handling
     int x, y;
+    
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
+        
         SDL_GetMouseState(&x, &y);
+        mousePos.x=y;
+        mousePos.y=x;
         x = (x - win->offsetX) / (win->size / 8);
         y = (y - win->offsetY) / (win->size / 8);
       
-      
+        if(x>=0 && x<8 && y>=0 && y<8 ){
+        if(dragging) break;
+
          if(game.get_gameState()==2){
             game.piece_move(y,x);
+           
+            
+            
         }else if(game.get_gameState()==1){
         game.piece_selection(x,y);
+        
+        }
+          if(game.get_gameState()==2){
+        dragging=true;
+        }
         }
         render();
 
+        break;
+    case SDL_MOUSEBUTTONUP:
+        if(dragging){
+            dragging=false;
+            SDL_GetMouseState(&x, &y);
+        mousePos.x=y;
+        mousePos.y=x;
+        x = (x - win->offsetX) / (win->size / 8);
+        y = (y - win->offsetY) / (win->size / 8);
+         if(x>=0 && x<8 && y>=0 && y<8 ){
+               if(game.get_currentChecePiece()->position==Box(y,x)){
+                
+               }else{
+
+                game.piece_move(y,x);           
+               }
+         }
+         render();
+         break;
+
+        }
+        
+        
+    case SDL_MOUSEMOTION:
+        if(dragging){
+        SDL_GetMouseState(&x, &y);
+        mousePos.x=y;
+        mousePos.y=x;
+   
+        x = (x - win->offsetX) / (win->size / 8);
+        y = (y - win->offsetY) / (win->size / 8);
+        
+          if(x>=0 && x<8 && y>=0 && y<8 ){
+               
+          }else{
+            game.piece_selection(9,0);
+            dragging=false;
+         
+          }
+          render();
+        }
         break;
     default:
         break;

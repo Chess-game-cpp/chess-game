@@ -145,7 +145,8 @@ b.get_chesspiece(x,y).promoteTo(prom);
                    }
                    else{
                        std::cout << "INVALID MOVES" << std :: endl;
-                       this->gameState=1;    
+                       piece_selection(y,x);
+                    //    this->gameState=1;    
                     return;
                        
                    }
@@ -163,6 +164,7 @@ b.get_chesspiece(x,y).promoteTo(prom);
                 this->gameState=2;
                 PawnPromotion=false;
                  ChessPiece pice;
+                 currentPiece=ChessPiece();
             if((x>=0 && x<8)&&(y>=0 && y<8)){         
                  pice= b.get_chesspiece(x,y);
                  if((pice.rank>0)&&(pice.color==b.get_turn())){

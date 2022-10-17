@@ -8,6 +8,8 @@ class GameScreen : public Screen
 {
     Engine game;
     SDL_Texture *texture;
+    bool dragging;
+    Box mousePos;
 
 public:
     GameScreen(Window *);
