@@ -62,7 +62,9 @@ public:
     }
     void display_state()
     {
-
+        b.switch_turn();
+        this->gameState=1;
+           this->check =b.check_checkmate(b.get_turn());
         if (b.get_turn() == 0)
         {
             std::cout << "White's Turn" << std ::endl;
@@ -105,8 +107,7 @@ public:
 
         (b.get_chesspiece(currentMove.x, currentMove.y)).promoteTo(prom);
         std::cout << (b.get_chesspiece(currentMove.x, currentMove.y)).rank<<std::endl;
-        b.switch_turn();
-        this->gameState = 1;
+     
         display_state();
     }
     void piece_move(int x, int y,bool switche=true)
@@ -132,7 +133,8 @@ public:
             if (available)
             {
                 currentMove = Box(x, y);
-                this->check = b.move_piece(pice, current);
+                b.move_piece(pice, current);
+              
                 castling = true;
                 if (pice.rank == 6 && sqrt(pow((pice.position.x - current.x), 2) + pow((pice.position.y - current.y), 2)) == 2)
                 {
@@ -170,9 +172,7 @@ public:
             }
         }
 
-        b.switch_turn();
-
-        this->gameState = 1;
+     
         display_state();
     }
     void piece_selection(int y, int x)
