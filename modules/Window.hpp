@@ -4,110 +4,109 @@
 #include "./GameScreen.hpp"
 #include "./GameScreen.hpp"
 using namespace std;
+// class to render SDL window
 class Window
 {
-    std::string title;
+    std::string title; // title
     int closed = false;
     SDL_Event ev;
 
 public:
-    int width = 800;
-    int height = 600;
-    int size,offsetX,offsetY;
+    int width;
+    int height;
+    int size, offsetX, offsetY;
     SDL_Window *window = nullptr;
-    Screen * screen=nullptr;
+    Screen *screen = nullptr;
     bool isClosed() const { return closed; }
     SDL_Surface *surface = nullptr;
     SDL_Renderer *render = NULL;
     GameScreen g;
-
     SDL_Texture *texture = NULL;
+    // window constructor
     Window(const std::string &title, int width, int height)
     {
-        
-      
+
         this->title = title;
         this->width = width;
         this->height = height;
+        // check if window failed to initialize
         if (!init())
         {
             closed = true;
+            return;
         }
+        // create renderer for window
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        // set window pointer in gameScreen to current
         g.set_window(this);
-        screen= &g;
-    
-    
-        while (1)
+        // set current screen as gameScreen g
+        screen = &g;
+        // gameloop
+        while (!closed)
         {
+            // poll event
             if (SDL_PollEvent(&ev) != 0)
             {
+                // close button clicked
                 if (ev.type == SDL_QUIT)
                 {
                     break;
                 }
+                // handle events
                 handle_event(ev);
             }
         }
     }
-    
+
     void handle_event(SDL_Event &e)
     {
 
         if (e.type == SDL_WINDOWEVENT)
         {
-            //window event
+            // window event
             switch (e.window.event)
             {
             case SDL_WINDOWEVENT_RESIZED:
-            width=e.window.data1;
-            height=e.window.data2;
-            screen->render();
-      
-            SDL_RenderPresent(render);
-               
+                // resize event handler
+                width = e.window.data1;
+                height = e.window.data2;
+                screen->render();
+                SDL_RenderPresent(render);
                 break;
-       
-            break;
-
             default:
                 break;
             }
-            
         }
-            screen->event_handle(e);
+        // screen event handling
+        screen->event_handle(e);
     }
     bool init()
     {
+        // initialize SDL window
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             std::cout << "Failed";
             return 0;
         }
+        // create window
         window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE);
-     
 
+        // check if window is null
         if (window == nullptr)
         {
             std::cout << "Failed to create Window.\n";
             return 0;
         }
-        //      if(!(IMG_Init(IMG_INIT_PNG)) & IMG_INIT_PNG){
-        //     std::cout <<"GAI";
-        // }
         return 1;
     }
-    // SDL_Surface * loadPng(std::string path ){
-    //     SDL_Surface image=IMG_Load(path);
-    //     return image;
 
-    // }
     ~Window()
     {
+        // destroy the window
+        SDL_FreeSurface(surface);
+        SDL_DestroyRenderer(render);
+        SDL_DestroyTexture(texture);
         SDL_DestroyWindow(window);
-
         SDL_Quit();
     }
-
-    
 };

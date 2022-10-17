@@ -1,3 +1,4 @@
+//declaring classes
 class Screen;
 class GameScreen;
 class Window;
@@ -15,8 +16,8 @@ using namespace std;
 
 int main(int argv, char **args)
 {
-    
-    Window w("Hello", 650, 650);
+    //initailizing the window object
+    Window w("Chess Game", 650, 650);
 
     return 0;
 }
