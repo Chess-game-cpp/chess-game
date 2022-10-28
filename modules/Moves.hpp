@@ -272,6 +272,7 @@ void ChessPiece ::generateLegalMoves(Board &b)
 {
   int displacement;
   Board temp;
+   
 
   this->generatepseudoMoves(b);//generate pseudo moves
   for (int k = 0; k < this->totalmoves; k++)
@@ -287,15 +288,21 @@ void ChessPiece ::generateLegalMoves(Board &b)
     else if (this->rank == 6)
     {
       //castle throught the check
-       displacement=abs(this->position.x-moves[k].x);
+       displacement=abs(this->position.y-moves[k].y);
+      
        //if castling move
        if(displacement==2){
+        //castling not possible while king is in check
+      
+  
+        if(!b.check_checkmate(this->color)){
         for(int i=0;i<k;i++){
           //castling is legal (i.e not through check)
           if(moves[i]==Box(moves[k].x,(moves[k].y>this->position.y)?5:3)){
             displacement=0;
             break;
           }
+        }
         }
   
         if(displacement!=0){

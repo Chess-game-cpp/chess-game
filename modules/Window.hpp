@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "./GameScreen.hpp"
-#include "./GameScreen.hpp"
+
 using namespace std;
 // class to render SDL window
 class Window
@@ -20,7 +21,7 @@ public:
     bool isClosed() const { return closed; }
     SDL_Surface *surface = nullptr;
     SDL_Renderer *render = NULL;
-    GameScreen g;
+    // GameScreen g;
     SDL_Texture *texture = NULL;
     // window constructor
     Window(const std::string &title, int width, int height)
@@ -33,14 +34,13 @@ public:
         if (!init())
         {
             closed = true;
-            return;
+            return; 
         }
         // create renderer for window
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         // set window pointer in gameScreen to current
-        g.set_window(this);
         // set current screen as gameScreen g
-        screen = &g;
+        screen = new GameScreen(this,10000);
         // gameloop
         while (!closed)
         {
@@ -91,6 +91,12 @@ public:
         // create window
         window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE);
 
+        //initialize ttf
+     if( TTF_Init() == -1 )
+                {
+                    printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+                   
+    }
         // check if window is null
         if (window == nullptr)
         {
@@ -103,6 +109,7 @@ public:
     ~Window()
     {
         // destroy the window
+        delete screen;
         SDL_FreeSurface(surface);
         SDL_DestroyRenderer(render);
         SDL_DestroyTexture(texture);
