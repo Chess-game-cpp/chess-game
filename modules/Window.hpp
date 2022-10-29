@@ -40,7 +40,7 @@ public:
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         // set window pointer in gameScreen to current
         // set current screen as gameScreen g
-        screen = new GameScreen(this,10000);
+        screen = new GameScreen(this,0);
         // gameloop
         while (!closed)
         {
@@ -89,7 +89,7 @@ public:
             return 0;
         }
         // create window
-        window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE);
+        window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,SDL_WINDOW_SHOWN);
 
         //initialize ttf
      if( TTF_Init() == -1 )

@@ -37,7 +37,7 @@ public:
     int adjust_time(int player)
     {
         int &time = player ? time2 : time1;
-        time -= 10;
+        time -= TIMER;
         if (time == 0)
         {
 

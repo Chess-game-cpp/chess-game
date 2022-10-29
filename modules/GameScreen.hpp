@@ -11,7 +11,6 @@ class GameScreen : public Screen
 {
     
     Timer timer;
-  
     protected:
     Engine game; // object game
     SDL_Texture *texture;
@@ -45,7 +44,7 @@ public:
     private:
     static Uint32 timer_update(Uint32 interval, void *data)
     {
-        int s = SDL_GetTicks();
+        int s = SDL_GetTicks64();
         GameScreen *gmscrn = (reinterpret_cast<GameScreen *>(data));
         int time = gmscrn->timer.adjust_time(gmscrn->game.get_board()->currentTurn);
         if (time == 1)
@@ -56,9 +55,12 @@ public:
         {
             gmscrn->game.times_up();
             gmscrn->render();
+            
             return 0;
         }
+        
 
-        return 10 - (SDL_GetTicks() - s);
+
+        return TIMER - (SDL_GetTicks64() - s);
     }
 };

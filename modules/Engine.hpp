@@ -74,7 +74,7 @@ public:
        //times up
         if (this->gameState == 4)
         {
-            if (b.get_turn() == 0)
+            if (b.get_turn() == 1)
             {
                 std::cout << "WHITE WINS!!";
             }
@@ -125,6 +125,7 @@ public:
     void times_up()
     {
         this->gameState = 4;
+        update_state();
     }
     void promote_pawn(int prom)
     {

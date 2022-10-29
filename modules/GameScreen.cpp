@@ -17,7 +17,7 @@ GameScreen::GameScreen(Window *win, int time)
     // if timer is initialized
     if (timer.is_active())
     {
-        timer.set_id(SDL_AddTimer(10, timer_update, (void *)(this)));
+        timer.set_id(SDL_AddTimer(TIMER, timer_update, (void *)(this)));
     }
     // load assets and render
     load_assets();
@@ -28,8 +28,10 @@ void GameScreen::create_chess_board()
 {
     // update the size of board and offset to show in screen
     win->size = win->width > win->height ? win->height : win->width;
-    win->offsetX = win->width > win->height ? (win->width - win->height) / 2 : 0;
-    win->offsetY = win->width < win->height ? (win->height - win->width) / 2 : 0;
+    win->offsetX=0;
+    win->offsetY=0;
+    // win->offsetX = win->width > win->height ? (win->width - win->height) / 2 : 0;
+    // win->offsetY = win->width < win->height ? (win->height - win->width) / 2 : 0;
     // create 8x8 chessboard
     for (int i = 0; i < 8; i++)
     {
@@ -120,7 +122,7 @@ void GameScreen::render()
     create_chess_board();
     ChessPiece p;
 
-    if (game.get_gameState() == 1)
+    if (game.get_gameState() == 1||game.get_gameState() == 4)
     {
         // if current gameState is idle
         // check if checkmate
@@ -309,8 +311,14 @@ void GameScreen::event_handle(SDL_Event &e)
 
     case SDL_MOUSEMOTION:
         // check if piece is dragging
+       
         if (dragging)
         {
+             if(game.get_gameState()==4){
+            dragging=false;
+            render();
+            break;
+        }
             SDL_GetMouseState(&x, &y);
             mousePos.x = y;
             mousePos.y = x;
@@ -326,6 +334,8 @@ void GameScreen::event_handle(SDL_Event &e)
                 // if mouse cursor is outside board abort the dragging
                 game.piece_selection(9, 0);
                 dragging = false;
+            
+
             }
             render();
         }
