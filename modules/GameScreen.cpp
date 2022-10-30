@@ -21,6 +21,7 @@ GameScreen::GameScreen(Window *win, int time)
     }
     // load assets and render
     load_assets();
+    game.init_game();
     render();
 }
 
@@ -28,8 +29,8 @@ void GameScreen::create_chess_board()
 {
     // update the size of board and offset to show in screen
     win->size = win->width > win->height ? win->height : win->width;
-    win->offsetX=0;
-    win->offsetY=0;
+    win->offsetX = 0;
+    win->offsetY = 0;
     // win->offsetX = win->width > win->height ? (win->width - win->height) / 2 : 0;
     // win->offsetY = win->width < win->height ? (win->height - win->width) / 2 : 0;
     // create 8x8 chessboard
@@ -122,14 +123,14 @@ void GameScreen::render()
     create_chess_board();
     ChessPiece p;
 
-    if (game.get_gameState() == 1||game.get_gameState() == 4)
+    if (game.get_gameState() == 1 || game.get_gameState() == 4)
     {
         // if current gameState is idle
         // check if checkmate
         if (game.is_checkmate())
         {
             // if checkmate show at board by blue rectangle
-            Box b = game.get_board()->get_king_position(game.get_board()->currentTurn);
+            Box b = game.get_king_position(game.get_turn());
             create_rectangle(b.y, b.x, win->render, 4);
         }
     }
@@ -140,7 +141,7 @@ void GameScreen::render()
         if (game.is_checkmate())
         {
             // if checkmate show at board by blue rectangle
-            Box b = game.get_board()->get_king_position(game.get_board()->currentTurn);
+            Box b = game.get_king_position(game.get_turn());
             create_rectangle(b.y, b.x, win->render, 5);
         }
     }
@@ -149,20 +150,20 @@ void GameScreen::render()
     {
         // if selection mode
         // grey rect for selected piece
-        create_rectangle((game.get_currentChecePiece())->position.y, (game.get_currentChecePiece())->position.x, win->render, 1);
-        for (int i = 0; i < (game.get_currentChecePiece())->totalmoves; i++)
+        create_rectangle((game.get_currentChessPiece())->get_position().y, (game.get_currentChessPiece())->get_position().x, win->render, 1);
+        for (int i = 0; i < (game.get_currentChessPiece())->totalmoves; i++)
         {
             // loop through moves of selected piece
-            if (((game.get_board())->chessBoard[(game.get_currentChecePiece())->moves[i].x][(game.get_currentChecePiece())->moves[i].y]).rank > 0)
+            if ((game.get_chesspiece((game.get_currentChessPiece())->get_moves()[i].x, (game.get_currentChessPiece())->get_moves()[i].y)).get_rank() > 0)
             {
 
                 // red if move captures the opponents piece
-                create_rectangle((game.get_currentChecePiece())->moves[i].y, (game.get_currentChecePiece())->moves[i].x, win->render, 3);
+                create_rectangle((game.get_currentChessPiece())->get_moves()[i].y, (game.get_currentChessPiece())->get_moves()[i].x, win->render, 3);
             }
             else
             {
                 // green if move is legal
-                create_rectangle((game.get_currentChecePiece())->moves[i].y, (game.get_currentChecePiece())->moves[i].x, win->render, 2);
+                create_rectangle((game.get_currentChessPiece())->get_moves()[i].y, (game.get_currentChessPiece())->get_moves()[i].x, win->render, 2);
             }
         }
     }
@@ -171,22 +172,22 @@ void GameScreen::render()
     {
         for (int j = 0; j < 8; j++)
         {
-            p = (game.get_board())->chessBoard[i][j];
+            p = game.get_chesspiece(i, j);
             // check if current index [i,j] holds any piece
-            if (p.rank != 0)
+            if (p.get_rank() != 0)
             {
                 // if dragging the piece avoid rendering it
-                if (game.get_gameState() == 2 && dragging == true && i == game.get_currentChecePiece()->position.x && j == game.get_currentChecePiece()->position.y)
+                if (game.get_gameState() == 2 && dragging == true && i == game.get_currentChessPiece()->get_position().x && j == game.get_currentChessPiece()->get_position().y)
                     continue;
                 // render chess piece
-                render_chesspiece(win->offsetY + (i * (win->size / 8)), win->offsetX + (j * (win->size / 8)), abs(p.rank - 6), p.color);
+                render_chesspiece(win->offsetY + (i * (win->size / 8)), win->offsetX + (j * (win->size / 8)), abs(p.get_rank() - 6), p.get_color());
             }
         }
     }
     if (dragging && game.get_gameState() == 2)
     {
         // render the piece that is dragging in screen
-        render_chesspiece(mousePos.x - (win->size / 16), mousePos.y - (win->size / 16), abs(game.get_currentChecePiece()->rank - 6), game.get_currentChecePiece()->color);
+        render_chesspiece(mousePos.x - (win->size / 16), mousePos.y - (win->size / 16), abs(game.get_currentChessPiece()->get_rank() - 6), game.get_currentChessPiece()->get_color());
     }
     // check for pawn promotion
     if (game.get_gameState() == 3)
@@ -198,7 +199,7 @@ void GameScreen::render()
             int x = game.get_currentMove()->y;
             int y = ((game.get_currentMove()->x / 7) * 4) + i;
             create_rectangle(x, y, win->render, 6);
-            render_chesspiece(win->offsetY + (y * (win->size / 8)), win->offsetX + (x * (win->size / 8)), abs(i + 2 - 6), game.get_currentChecePiece()->color);
+            render_chesspiece(win->offsetY + (y * (win->size / 8)), win->offsetX + (x * (win->size / 8)), abs(i + 2 - 6), game.get_currentChessPiece()->get_color());
         }
     }
 
@@ -295,7 +296,7 @@ void GameScreen::event_handle(SDL_Event &e)
             // check if clicked inside the board
             if (x >= 0 && x < 8 && y >= 0 && y < 8)
             {
-                if (game.get_currentChecePiece()->position == Box(y, x))
+                if (game.get_currentChessPiece()->get_position() == Box(y, x))
                 {
                     // select the chess piece instead of dragging
                 }
@@ -311,14 +312,15 @@ void GameScreen::event_handle(SDL_Event &e)
 
     case SDL_MOUSEMOTION:
         // check if piece is dragging
-       
+
         if (dragging)
         {
-             if(game.get_gameState()==4){
-            dragging=false;
-            render();
-            break;
-        }
+            if (game.get_gameState() == 4)
+            {
+                dragging = false;
+                render();
+                break;
+            }
             SDL_GetMouseState(&x, &y);
             mousePos.x = y;
             mousePos.y = x;
@@ -334,8 +336,6 @@ void GameScreen::event_handle(SDL_Event &e)
                 // if mouse cursor is outside board abort the dragging
                 game.piece_selection(9, 0);
                 dragging = false;
-            
-
             }
             render();
         }

@@ -10,6 +10,7 @@ class Box;
 #include <SDL2/SDL_image.h>
 #define TIMER 100
 #include "modules/Window.hpp"
+#include "modules/Board.cpp"
 #include "modules/GameScreen.cpp"
 
 using namespace std;

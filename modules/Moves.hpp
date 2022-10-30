@@ -1,3 +1,4 @@
+#pragma once
 void ChessPiece ::knight(int ix, int iy, Board &b)
 {
   /*moves of knight(L movement)
@@ -279,7 +280,7 @@ void ChessPiece ::generateLegalMoves(Board &b)
   {
     temp = b;
 
-    if (temp.move_piece(*this, this->moves[k], false))
+    if (temp.handle_move(*this, this->moves[k], false))
     {
       //if the move will lead to check then remove the move
       this->removeMoves(k);
