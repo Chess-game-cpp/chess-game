@@ -1,6 +1,4 @@
-src/
-SDL2_image.dll
-SDL2.dll
-SDL2_ttf.dll
-main.exe
+/src
+/*.dll
+*.exe
 .vscode/
