@@ -15,7 +15,6 @@ class Window
 public:
     int width;
     int height;
-    int size, offsetX, offsetY;
     SDL_Window *window = nullptr;
     Screen *screen = nullptr;
     bool isClosed() const { return closed; }
@@ -34,13 +33,13 @@ public:
         if (!init())
         {
             closed = true;
-            return; 
+            return;
         }
         // create renderer for window
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         // set window pointer in gameScreen to current
         // set current screen as gameScreen g
-        screen = new GameScreen(this,0);
+        screen = new GameScreen(this, 0);
         // gameloop
         while (!closed)
         {
@@ -89,14 +88,13 @@ public:
             return 0;
         }
         // create window
-        window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
 
-        //initialize ttf
-     if( TTF_Init() == -1 )
-                {
-                    printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-                   
-    }
+        // initialize ttf
+        if (TTF_Init() == -1)
+        {
+            printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+        }
         // check if window is null
         if (window == nullptr)
         {

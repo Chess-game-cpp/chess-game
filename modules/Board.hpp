@@ -117,6 +117,11 @@ public:
     {
         return &currentMove;
     }
+    ChessPiece *get_captured(int player)
+    {
+
+        return captured[player];
+    }
 
     void print_board()
     {

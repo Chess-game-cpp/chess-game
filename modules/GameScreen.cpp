@@ -27,12 +27,7 @@ GameScreen::GameScreen(Window *win, int time)
 
 void GameScreen::create_chess_board()
 {
-    // update the size of board and offset to show in screen
-    win->size = win->width > win->height ? win->height : win->width;
-    win->offsetX = 0;
-    win->offsetY = 0;
-    // win->offsetX = win->width > win->height ? (win->width - win->height) / 2 : 0;
-    // win->offsetY = win->width < win->height ? (win->height - win->width) / 2 : 0;
+
     // create 8x8 chessboard
     for (int i = 0; i < 8; i++)
     {
@@ -48,10 +43,10 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r, int color = 0)
     // create rectangele in screen
     SDL_Rect rect;
     // calculating rect based on screen size and square positions [x,y]
-    rect.x = x * (win->size / 8) + win->offsetX;
-    rect.y = y * (win->size / 8) + win->offsetY;
-    rect.w = (win->size / 8);
-    rect.h = (win->size / 8);
+    rect.x = x * dim::size;
+    rect.y = y * dim::size;
+    rect.w = dim::size;
+    rect.h = dim::size;
     // support alpha
     SDL_SetRenderDrawBlendMode(win->render, SDL_BLENDMODE_BLEND);
     // set render_draw_color based on color parameter
@@ -110,6 +105,10 @@ void GameScreen::load_assets()
     // chesspieces
     SDL_Surface *image = IMG_Load("assets/pieces.png");
     texture = SDL_CreateTextureFromSurface(win->render, image);
+    image = IMG_Load("assets/bg.png");
+    btexture = SDL_CreateTextureFromSurface(win->render, image);
+    image = IMG_Load("assets/timer.png");
+    timer_texture = SDL_CreateTextureFromSurface(win->render, image);
     SDL_FreeSurface(image);
 }
 void GameScreen::render()
@@ -117,6 +116,7 @@ void GameScreen::render()
     if (rendering)
         return;
     rendering = true;
+    SDL_SetRenderDrawColor(win->render, 255, 255, 255, 255);
     // clear the renderer
     SDL_RenderClear(win->render);
     // create board in screen
@@ -180,14 +180,14 @@ void GameScreen::render()
                 if (game.get_gameState() == 2 && dragging == true && i == game.get_currentChessPiece()->get_position().x && j == game.get_currentChessPiece()->get_position().y)
                     continue;
                 // render chess piece
-                render_chesspiece(win->offsetY + (i * (win->size / 8)), win->offsetX + (j * (win->size / 8)), abs(p.get_rank() - 6), p.get_color());
+                render_chesspiece((i * dim::size), (j * dim::size), abs(p.get_rank() - 6), p.get_color());
             }
         }
     }
     if (dragging && game.get_gameState() == 2)
     {
         // render the piece that is dragging in screen
-        render_chesspiece(mousePos.x - (win->size / 16), mousePos.y - (win->size / 16), abs(game.get_currentChessPiece()->get_rank() - 6), game.get_currentChessPiece()->get_color());
+        render_chesspiece(mousePos.x - dim::size / 2, mousePos.y - dim::size / 2, abs(game.get_currentChessPiece()->get_rank() - 6), game.get_currentChessPiece()->get_color());
     }
     // check for pawn promotion
     if (game.get_gameState() == 3)
@@ -199,15 +199,117 @@ void GameScreen::render()
             int x = game.get_currentMove()->y;
             int y = ((game.get_currentMove()->x / 7) * 4) + i;
             create_rectangle(x, y, win->render, 6);
-            render_chesspiece(win->offsetY + (y * (win->size / 8)), win->offsetX + (x * (win->size / 8)), abs(i + 2 - 6), game.get_currentChessPiece()->get_color());
+            render_chesspiece((y * dim::size), (x * dim::size), abs(i + 2 - 6), game.get_currentChessPiece()->get_color());
         }
     }
+    // sidebar
+
+    SDL_Rect rec2;
+    rec2.x = 0;
+    rec2.y = 0;
+    rec2.h = dim::height;
+    rec2.w = dim::sidebar;
+
+    SDL_Rect rec3;
+    rec3.x = dim::height;
+    rec3.y = 0;
+    rec3.h = dim::height;
+    rec3.w = dim::sidebar;
+
+    SDL_RenderCopy(win->render, btexture, &rec2, &rec3);
+    // rendeer player detaisl
+    SDL_Color BLACK = {0, 0, 0, 255};
+    for (int i = 0; i < 2; i++)
+    {
+        int lx = dim::height + 10;
+        int ly = 10 + (i ? 550 : 0);
+        // player name
+        SDL_Rect prect;
+        prect.x = lx;
+        prect.y = ly;
+        TextureManager::set_font("assets/BebasNeue.ttf", 30);
+        TextureManager::render_text((i ? "Player 1" : "Player2"), BLACK, win->render, prect);
+        if (timer.is_active())
+        {
+            prect.x = lx;
+            prect.y = ly;
+            prect.w = dim::sidebar - 20;
+            TextureManager::render_text(mstotime(timer.get_time(!i)).c_str(), BLACK, win->render, prect, 0, 2);
+            prect.h = 35;
+            prect.w = 35;
+            prect.y += (TextureManager::height / 2) - (prect.h / 2) - 4;
+            prect.x -= prect.w + 4;
+            SDL_RenderCopy(win->render, timer_texture, NULL, &prect);
+        }
+        ly += 30;
+        for (int j = 0; j < 16; j++)
+        {
+            ChessPiece &cp = game.get_captured(i)[j];
+            if (cp.get_rank() == 0)
+            {
+                break;
+            }
+
+            render_chesspiece(ly, lx, 6 - cp.get_rank(), cp.get_color(), (dim::sidebar - 10) / 8);
+            lx += (dim::sidebar - 10) / 8;
+            if (j == 7)
+            {
+                lx = dim::height + 10;
+                ly = ly + (dim::sidebar - 10) / 8;
+            }
+        }
+    }
+
+    // render_info
+    SDL_Rect turn;
+    turn.x = dim::height;
+    turn.y = ((dim::height) / 2);
+    turn.w = dim::sidebar;
+    std::string text;
+    if (game.get_gameState() == 4)
+    {
+
+        text = game.get_turn() ? "Black Won" : "White Won";
+        TextureManager::render_text("TIME'S UP!!", BLACK, win->render, turn, 0, 1);
+        //"Black Won" White Won
+        // Time's Up
+    }
+    else if (game.get_gameState() == 0)
+    {
+        text = game.is_checkmate() ? (!game.get_turn() ? "Black Won" : "White Won") : "Match Drawn";
+        // "Black Won" White Won
+        // Match Draw
+    }
+    else
+    {
+        text = !game.get_turn() ? "White's Turn" : "Black's Turn";
+        if (game.is_checkmate())
+        {
+
+            TextureManager::render_text("CHECKMATE!!", BLACK, win->render, turn, 0, 1);
+        }
+        // Black's turn
+        // checkmatee
+    }
+    turn.x = dim::height;
+    turn.y = ((dim::height) / 2) - 35;
+    turn.w = dim::sidebar;
+    TextureManager::render_text(text, BLACK, win->render, turn, 0, 1);
 
     SDL_RenderPresent(win->render);
     rendering = false;
 }
 
-void GameScreen::render_chesspiece(int x, int y, int rank, int color)
+std::string GameScreen::mstotime(int ms)
+{
+    int second = ms / 1000;
+    int min = second / 60;
+    second = second % 60;
+    std::string txt = (min < 10 ? "0" : "") + to_string(min) + ":" + (second < 10 ? "0" : "") + to_string(second);
+    return txt;
+}
+
+void GameScreen::render_chesspiece(int x, int y, int rank, int color, int size)
 {
     // Function to render chess piece
     // rect to capture the required piece from the image
@@ -220,8 +322,8 @@ void GameScreen::render_chesspiece(int x, int y, int rank, int color)
     rect.h = 80;
     rect2.x = y;
     rect2.y = x;
-    rect2.w = win->size / 8;
-    rect2.h = win->size / 8;
+    rect2.w = size;
+    rect2.h = size;
     // render the piece in screen
     SDL_RenderCopy(win->render, texture, &rect, &rect2);
 }
@@ -237,8 +339,8 @@ void GameScreen::event_handle(SDL_Event &e)
         SDL_GetMouseState(&x, &y);
         mousePos.x = y;
         mousePos.y = x;
-        x = (x - win->offsetX) / (win->size / 8);
-        y = (y - win->offsetY) / (win->size / 8);
+        x = (x) / (dim::size);
+        y = (y) / (dim::size);
 
         if (game.get_gameState() == 3)
         {
@@ -291,8 +393,8 @@ void GameScreen::event_handle(SDL_Event &e)
             SDL_GetMouseState(&x, &y);
             mousePos.x = y;
             mousePos.y = x;
-            x = (x - win->offsetX) / (win->size / 8);
-            y = (y - win->offsetY) / (win->size / 8);
+            x = (x) / (dim::size);
+            y = y / (dim::size);
             // check if clicked inside the board
             if (x >= 0 && x < 8 && y >= 0 && y < 8)
             {
@@ -325,8 +427,8 @@ void GameScreen::event_handle(SDL_Event &e)
             mousePos.x = y;
             mousePos.y = x;
 
-            x = (x - win->offsetX) / (win->size / 8);
-            y = (y - win->offsetY) / (win->size / 8);
+            x = (x) / (dim::size);
+            y = (y) / (dim::size);
 
             if (x >= 0 && x < 8 && y >= 0 && y < 8)
             {
