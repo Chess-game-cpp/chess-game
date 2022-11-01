@@ -13,10 +13,11 @@ class GameScreen : public Screen
 
     Timer timer;
     SDL_Texture *timer_texture;
-    Button exitbtn;
+
     Button resbtn;
 
 protected:
+    Button exitbtn;
     Board game; // object game
     SDL_Texture *texture;
     SDL_Texture *btexture;
@@ -24,7 +25,7 @@ protected:
     bool dragging;
     Box mousePos;
     Modal modal;
-    bool modal_active;
+   
 
 public:
     // functions declartaions
@@ -69,14 +70,18 @@ protected:
     void create_chess_board();
     void create_rectangle(int, int, SDL_Renderer *&, int);
     void render_chesspiece(int, int, int, int, int = dim::size);
-    void load_other();
     void render_chessgame();
-    void render_sidebar();
-    void modal_handler()
+    virtual void render_sidebar();
+    virtual void handle_move(int, int, bool = true);
+ void load_other();
+ virtual void show_hint(){
+
+ }
+  virtual  void modal_handler()
     {
         int x = mousePos.y;
         int y = mousePos.x;
-        modal_active = false;
+        modal.is_active = false;
         int id = (modal.is_Clicked(x, y) + 1) / 2;
         if (modal.is_Clicked(x, y) % 2 == 1)
         {
@@ -90,13 +95,13 @@ protected:
             }
         }
     }
-    int button_handler()
+   virtual int button_handler()
     {
         int x = mousePos.y;
         int y = mousePos.x;
         if (resbtn.is_Clicked(x, y))
         {
-            modal_active = true;
+            modal.is_active = true;
             modal.set(1, "Do you Want to Restart?");
             std::cout << "Restart Button Clicked\n";
             render();
@@ -104,7 +109,7 @@ protected:
         }
         else if (exitbtn.is_Clicked(x, y))
         {
-            modal_active = true;
+            modal.is_active = true;
             modal.set(2, "Do you Want to Exit?");
             std::cout << "Exit Button Clicked\n";
             render();

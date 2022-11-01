@@ -1,3 +1,4 @@
+#pragma once
 #include <SDL2/SDL.h>
 #include <iostream>
 class Button
@@ -48,8 +49,10 @@ class Modal
     Button cancelbtn;
 
 public:
+    bool is_active;
     Modal()
     {
+        is_active=false;
     }
     void init(SDL_Renderer *render, int x, int y, int w, int h)
     {

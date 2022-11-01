@@ -1,6 +1,7 @@
 // declaring classes
 class Screen;
 class GameScreen;
+class PuzzleScreen;
 class Window;
 class Board;
 class ChessPiece;
@@ -25,6 +26,7 @@ namespace dim
 #include "modules/Window.hpp"
 #include "modules/Board.cpp"
 #include "modules/GameScreen.cpp"
+#include "modules/PuzzleScreen.cpp"
 
 using namespace std;
 

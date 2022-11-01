@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "./GameScreen.hpp"
+#include "./PuzzleScreen.hpp"
 
 using namespace std;
 // class to render SDL window
@@ -39,7 +40,7 @@ public:
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         // set window pointer in gameScreen to current
         // set current screen as gameScreen g
-        screen = new GameScreen(this, 0);
+        screen = new PuzzleScreen(this);
         // gameloop
         while (!closed)
         {

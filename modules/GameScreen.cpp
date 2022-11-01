@@ -8,7 +8,7 @@ using namespace std;
 GameScreen::GameScreen(Window *win, int time)
 {
     // Default constructor
-    modal_active = false;
+    modal.is_active = false;
     this->win = win;
     rendering = false;
     dragging = false;
@@ -95,6 +95,11 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r, int color = 0)
         // pawn promotion rect
         SDL_SetRenderDrawColor(r, 240, 240, 240, 255);
     }
+    else if (color == 7)
+    {
+        // hint rect
+        SDL_SetRenderDrawColor(r, 245, 181, 57, 250);
+    }
     SDL_RenderFillRect(r, &rect); // create_rect
     // reset render color
     SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
@@ -136,7 +141,7 @@ void GameScreen::render()
     
     // render modal
 
-    if (modal_active)
+    if (modal.is_active)
     {
         modal.render(win->render);
     }
@@ -151,6 +156,7 @@ std::string GameScreen::mstotime(int ms)
     std::string txt = (min < 10 ? "0" : "") + to_string(min) + ":" + (second < 10 ? "0" : "") + to_string(second);
     return txt;
 }
+
 void GameScreen::render_chessgame(){
      // create board in screen
     create_chess_board();
@@ -200,6 +206,8 @@ void GameScreen::render_chessgame(){
             }
         }
     }
+    //hint for puzzle mode
+    show_hint();
     // render chess piece in the board
     for (int i = 0; i < 8; i++)
     {
@@ -362,7 +370,7 @@ void GameScreen::event_handle(SDL_Event &e)
         SDL_GetMouseState(&x, &y);
         mousePos.x = y;
         mousePos.y = x;
-        if (modal_active)
+        if (modal.is_active)
         {
             if (modal.is_Clicked(x, y))
             {
@@ -372,10 +380,9 @@ void GameScreen::event_handle(SDL_Event &e)
             break;
         }
 
-        if (x > dim::height)
-        {
-           if(button_handler())break;
-        }
+        
+        if(button_handler())break;
+        
         x = (x) / (dim::size);
         y = (y) / (dim::size);
         // button_click handling
@@ -407,7 +414,8 @@ void GameScreen::event_handle(SDL_Event &e)
             // move the chess piece
             if (game.get_gameState() == 2)
             {
-                game.piece_move(y, x);
+                handle_move(y,x,true);
+               
             }
             // select the chess piece
             else if (game.get_gameState() == 1)
@@ -443,7 +451,7 @@ void GameScreen::event_handle(SDL_Event &e)
                 else
                 {
                     // move chess piece if legal
-                    game.piece_move(y, x, false);
+                    handle_move(y,x,false);
                 }
             }
             render();
@@ -483,4 +491,9 @@ void GameScreen::event_handle(SDL_Event &e)
     default:
         break;
     }
+}
+ void GameScreen::handle_move(int y,int x,bool dat){
+    game.piece_move(y,x,dat);
+
+
 }

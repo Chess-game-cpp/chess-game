@@ -91,6 +91,72 @@ public:
         switch_turn();
         update_state();
     }
+     std::string get_fen()
+    {
+        std::string fn = "";
+        for (int x = 0; x < 8; x++)
+        {
+            int blank = 0;
+            for (int y = 0; y < 8; y++)
+            {
+                if (chessBoard[x][y].rank != 0)
+                {
+                    if (blank > 0)
+                    {
+                        fn += char(blank + 48);
+                    }
+                    fn += char(pcs[chessBoard[x][y].rank] - (!chessBoard[x][y].color * 32));
+                    blank = 0;
+                }
+                else
+                {
+                    blank += 1;
+                }
+            }
+            if (blank > 0)
+            {
+                fn += char(blank + 48);
+            }
+            if (x != 7)
+            {
+                fn += "/";
+            }
+        }
+        fn += (get_turn() ? " b " : " w ");
+        bool castl = false;
+        if (castling[0][1])
+        {
+            castl = true;
+            fn += 'K';
+        }
+        if (castling[0][0])
+        {
+            castl = true;
+            fn += 'Q';
+        }
+        if (castling[1][1])
+        {
+            castl = true;
+            fn += 'k';
+        }
+        if (castling[1][0])
+        {
+            castl = true;
+            fn += 'q';
+        }
+        fn += castl ? " " : "- ";
+        if (enpasant.is_valid())
+        {
+            fn += char(enpasant.y + 97);
+            fn += char(((8-enpasant.x) + 48));
+        }
+        else
+        {
+            fn += "-";
+        }
+        return fn;
+    }
+   
     int get_gameState()
     {
         return gameState;
@@ -351,6 +417,12 @@ private:
     }
     void parse_fen(std::string fen)
     {
+        //clean board
+        for(int x=0;x<8;x++){
+         for(int y=0;y<8;y++){
+            chessBoard[x][y].set_rank(0);
+        }       
+        }
         // parse fen string to add pieces to board
         int x = 0;
         int y = 0;
@@ -398,19 +470,19 @@ private:
             {
             case 'k':
                 // King side White
-                castling[1][0] = true;
+                castling[1][1] = true;
                 break;
             case 'K':
                 // King Side black
-                castling[0][0] = true;
+                castling[0][1] = true;
                 break;
             case 'Q':
                 // Queen side white
-                castling[0][1] = true;
+                castling[0][0] = true;
                 break;
             case 'q':
                 // Queen side black
-                castling[1][1] = true;
+                castling[1][0] = true;
                 break;
             default:
                 break;
