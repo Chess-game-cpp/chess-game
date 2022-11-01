@@ -8,10 +8,10 @@ using namespace std;
 GameScreen::GameScreen(Window *win, int time)
 {
     // Default constructor
+    modal_active = false;
     this->win = win;
     rendering = false;
     dragging = false;
-    font = nullptr;
     // set count_down timer
     timer.set_timer(time);
     // if timer is initialized
@@ -21,6 +21,7 @@ GameScreen::GameScreen(Window *win, int time)
     }
     // load assets and render
     load_assets();
+    modal.init(win->render, 0, 0, dim::width, dim::height);
     game.init_game();
     render();
 }
@@ -107,8 +108,16 @@ void GameScreen::load_assets()
     texture = SDL_CreateTextureFromSurface(win->render, image);
     image = IMG_Load("assets/bg.png");
     btexture = SDL_CreateTextureFromSurface(win->render, image);
-    image = IMG_Load("assets/timer.png");
+    load_other();
+    SDL_FreeSurface(image);
+}
+void GameScreen::load_other(){
+
+    SDL_Surface *image = IMG_Load("assets/timer.png");
     timer_texture = SDL_CreateTextureFromSurface(win->render, image);
+
+    exitbtn.init(win->render, "assets/exit.png", dim::height + (dim::sidebar - 139) / 2, 430);
+    resbtn.init(win->render, "assets/restart.png", dim::height + (dim::sidebar - 139) / 2, 430 + 55);
     SDL_FreeSurface(image);
 }
 void GameScreen::render()
@@ -119,7 +128,31 @@ void GameScreen::render()
     SDL_SetRenderDrawColor(win->render, 255, 255, 255, 255);
     // clear the renderer
     SDL_RenderClear(win->render);
-    // create board in screen
+   //render game_assets
+    render_chessgame();
+    // sidebar
+    render_sidebar();
+
+    
+    // render modal
+
+    if (modal_active)
+    {
+        modal.render(win->render);
+    }
+    SDL_RenderPresent(win->render);
+    rendering = false;
+}
+std::string GameScreen::mstotime(int ms)
+{
+    int second = ms / 1000;
+    int min = second / 60;
+    second = second % 60;
+    std::string txt = (min < 10 ? "0" : "") + to_string(min) + ":" + (second < 10 ? "0" : "") + to_string(second);
+    return txt;
+}
+void GameScreen::render_chessgame(){
+     // create board in screen
     create_chess_board();
     ChessPiece p;
 
@@ -202,8 +235,9 @@ void GameScreen::render()
             render_chesspiece((y * dim::size), (x * dim::size), abs(i + 2 - 6), game.get_currentChessPiece()->get_color());
         }
     }
-    // sidebar
-
+}
+void GameScreen::render_sidebar(){
+    //render background
     SDL_Rect rec2;
     rec2.x = 0;
     rec2.y = 0;
@@ -263,12 +297,11 @@ void GameScreen::render()
     // render_info
     SDL_Rect turn;
     turn.x = dim::height;
-    turn.y = ((dim::height) / 2);
+    turn.y = ((dim::height) / 2) - 25;
     turn.w = dim::sidebar;
     std::string text;
     if (game.get_gameState() == 4)
     {
-
         text = game.get_turn() ? "Black Won" : "White Won";
         TextureManager::render_text("TIME'S UP!!", BLACK, win->render, turn, 0, 1);
         //"Black Won" White Won
@@ -292,23 +325,13 @@ void GameScreen::render()
         // checkmatee
     }
     turn.x = dim::height;
-    turn.y = ((dim::height) / 2) - 35;
+    turn.y = ((dim::height) / 2) - 60;
     turn.w = dim::sidebar;
     TextureManager::render_text(text, BLACK, win->render, turn, 0, 1);
-
-    SDL_RenderPresent(win->render);
-    rendering = false;
+    // render buttons
+    exitbtn.render(win->render);
+    resbtn.render(win->render);
 }
-
-std::string GameScreen::mstotime(int ms)
-{
-    int second = ms / 1000;
-    int min = second / 60;
-    second = second % 60;
-    std::string txt = (min < 10 ? "0" : "") + to_string(min) + ":" + (second < 10 ? "0" : "") + to_string(second);
-    return txt;
-}
-
 void GameScreen::render_chesspiece(int x, int y, int rank, int color, int size)
 {
     // Function to render chess piece
@@ -331,7 +354,7 @@ void GameScreen::event_handle(SDL_Event &e)
 {
     // handle events in Game Screen
     int x, y;
-
+ 
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
@@ -339,8 +362,23 @@ void GameScreen::event_handle(SDL_Event &e)
         SDL_GetMouseState(&x, &y);
         mousePos.x = y;
         mousePos.y = x;
+        if (modal_active)
+        {
+            if (modal.is_Clicked(x, y))
+            {
+                modal_handler();
+            }
+            render();
+            break;
+        }
+
+        if (x > dim::height)
+        {
+           if(button_handler())break;
+        }
         x = (x) / (dim::size);
         y = (y) / (dim::size);
+        // button_click handling
 
         if (game.get_gameState() == 3)
         {

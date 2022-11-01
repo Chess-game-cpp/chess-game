@@ -2,16 +2,21 @@
 class Screen;
 class GameScreen;
 class Window;
+class Board;
+class ChessPiece;
+class Box;
 namespace dim
 {
     const int height = 672;
     const int width = 950;
     const int size = height / 8;
     const int sidebar = width - height;
+    const int modal_h=134;
+    const int modal_w=332;
+    const int modal_mv=20;
+    const int modal_mh=20;
+    
 };
-class Board;
-class ChessPiece;
-class Box;
 #define TIMER 100
 #include <iostream>
 #include <SDL2/SDL.h>
