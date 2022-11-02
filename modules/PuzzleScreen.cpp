@@ -75,6 +75,14 @@ void PuzzleScreen::load_assets()
    tabtn.init(win->render, "assets/tryagain.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
    nxtbtn.init(win->render, "assets/next.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
    hintbtn.init(win->render, "assets/hint.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
+   fstream file("assets/puzzle.csv");
+   std::string line;
+   while (std::getline(file,line))
+   {
+   Puzzles.push_back(line);
+ 
+   }
+   file.close();
 }
 void PuzzleScreen::show_hint()
 {

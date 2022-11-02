@@ -2,7 +2,10 @@
 #include "./GameScreen.hpp"
 #include "./Component.cpp"
 #include "./Window.hpp"
+#include <fstream>
+#include <sstream>
 #include <iostream>
+#include <vector>
 namespace states{
  enum state{idle,wrong,solved};
 };
@@ -14,12 +17,12 @@ class PuzzleScreen : public GameScreen
     int wrong_move;
     int state;
     std::string fenn; 
-    std::string move[100];
     int current_move;
-    int total_moves;
     bool hint;
     Box current_position;
     Box next_position;
+    vector <std::string> Puzzles;
+    vector <std::string> moves;
     //buttons
     Button hintbtn;
     Button tabtn;
@@ -42,13 +45,26 @@ public:
 protected:
     void load_puzzle()
     {
-        fenn = "r1b1kb1r/pp2q3/2n3p1/2p1P2p/5Q2/1P2pN2/PBP3PP/2KR1B1R w kq - 0 16";
-        move[0] = "f4e3";
-        move[1] = "f8h6";
-        move[2] = "e3h6";
-        move[3] = "h8h6";
+        int index=(SDL_GetTicks64()%Puzzles.size());
+        stringstream ptxt(Puzzles[index]+" ");
+        Puzzles.erase(Puzzles.begin()+index);
+        std::getline(ptxt,fenn,',');
+        std::string line;
+        moves.clear();
+        while (std::getline(ptxt,line,' '))
+        {
+            moves.push_back(line);
+
+            /* code */
+        }
+        
+        // fenn = "r1b1kb1r/pp2q3/2n3p1/2p1P2p/5Q2/1P2pN2/PBP3PP/2KR1B1R w kq - 0 16";
+
+        // move[0] = "f4e3";
+        // move[1] = "f8h6";
+        // move[2] = "e3h6";
+        // move[3] = "h8h6";
         current_move = -1;
-        total_moves=4;
         game.init_game(fenn);
         move_bot();
     }
@@ -68,10 +84,10 @@ protected:
     void parse_move()
     {
         current_move += 1;
-        current_position.y = move[current_move].c_str()[0] - 97;
-        current_position.x = 8 - (move[current_move].c_str()[1] - 48);
-        next_position.y = move[current_move].c_str()[2] - 97;
-        next_position.x = 8 - (move[current_move].c_str()[3] - 48);
+        current_position.y = moves[current_move].c_str()[0] - 97;
+        current_position.x = 8 - (moves[current_move].c_str()[1] - 48);
+        next_position.y = moves[current_move].c_str()[2] - 97;
+        next_position.x = 8 - (moves[current_move].c_str()[3] - 48);
     }
      void handle_move(int y, int x, bool dat)
     {
@@ -102,7 +118,7 @@ protected:
                     wrong_move += 1;
                     state=states::wrong;
                 }
-                if(total_moves==current_move+1 && state!=states::wrong){
+                if(moves.size()==current_move+1 && state!=states::wrong){
                          puzzle_solved += 1;
                     state=states::solved;
                     
@@ -136,6 +152,7 @@ protected:
             }
             else if (id == 2)
             {
+                
                 std::cout << "Exit Now\n";
             }
         }

@@ -23,7 +23,7 @@ GameScreen::GameScreen(Window *win, int time)
     load_assets();
     modal.init(win->render, 0, 0, dim::width, dim::height);
     game.init_game();
-    render();
+    // render();
 }
 
 void GameScreen::create_chess_board()
