@@ -270,7 +270,7 @@ void GameScreen::render_sidebar(){
         prect.x = lx;
         prect.y = ly;
         TextureManager::set_font("assets/BebasNeue.ttf", 30);
-        TextureManager::render_text((i ? "Player 1" : "Player2"), BLACK, win->render, prect);
+        TextureManager::render_text(win->players[!i], BLACK, win->render, prect);
         if (timer.is_active())
         {
             prect.x = lx;
@@ -310,20 +310,20 @@ void GameScreen::render_sidebar(){
     std::string text;
     if (game.get_gameState() == 4)
     {
-        text = game.get_turn() ? "Black Won" : "White Won";
+        text = win->players[game.get_turn()]+" Won";
         TextureManager::render_text("TIME'S UP!!", BLACK, win->render, turn, 0, 1);
         //"Black Won" White Won
         // Time's Up
     }
     else if (game.get_gameState() == 0)
     {
-        text = game.is_checkmate() ? (!game.get_turn() ? "Black Won" : "White Won") : "Match Drawn";
+        text = game.is_checkmate() ?win->players[!game.get_turn()]+" Won" : "Match Drawn";
         // "Black Won" White Won
         // Match Draw
     }
     else
     {
-        text = !game.get_turn() ? "White's Turn" : "Black's Turn";
+        text = win->players[game.get_turn()]+"'s Turn";
         if (game.is_checkmate())
         {
 

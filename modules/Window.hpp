@@ -10,27 +10,31 @@ using namespace std;
 // class to render SDL window
 class Window
 {
+
     std::string title; // title
     int closed = false;
     SDL_Event ev;
-
-public:
-    int width;
-    int height;
     SDL_Window *window = nullptr;
     Screen *screen = nullptr;
+    SDL_Surface *surface ;
+
+public:
+    std::string players[2];
+    int width;
+    int height;
+    int timer;
     bool isClosed() const { return closed; }
     void close_window(){
         closed=true;
     }
-    SDL_Surface *surface = nullptr;
-    SDL_Renderer *render = NULL;
-    // GameScreen g;
-    SDL_Texture *texture = NULL;
+    SDL_Renderer *render ;
+
     // window constructor
     Window(const std::string &title, int width, int height)
     {
-
+        timer=0;
+        players[0]="WHITE";
+        players[1]="BLACK";
         this->title = title;
         this->width = width;
         this->height = height;
@@ -71,7 +75,7 @@ public:
        
 
         }else if(sc==1){
-            screen=new GameScreen(this);
+            screen=new GameScreen(this,timer);
         }
         else if(sc==2){
             screen=new PuzzleScreen(this);
@@ -80,7 +84,18 @@ public:
         screen->render();
        
     };
-    void handle_event(SDL_Event &e)
+
+    ~Window()
+    {
+        // destroy the window
+        delete screen;
+        SDL_FreeSurface(surface);
+        SDL_DestroyRenderer(render);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+    }
+    private:
+        void handle_event(SDL_Event &e)
     {
 
         if (e.type == SDL_WINDOWEVENT)
@@ -127,14 +142,4 @@ public:
         return 1;
     }
 
-    ~Window()
-    {
-        // destroy the window
-        delete screen;
-        SDL_FreeSurface(surface);
-        SDL_DestroyRenderer(render);
-        SDL_DestroyTexture(texture);
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-    }
 };
