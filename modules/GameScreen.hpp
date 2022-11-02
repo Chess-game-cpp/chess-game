@@ -77,24 +77,7 @@ protected:
  virtual void show_hint(){
 
  }
-  virtual  void modal_handler()
-    {
-        int x = mousePos.y;
-        int y = mousePos.x;
-        modal.is_active = false;
-        int id = (modal.is_Clicked(x, y) + 1) / 2;
-        if (modal.is_Clicked(x, y) % 2 == 1)
-        {
-            if (id == 1)
-            {
-                std::cout << "Restart Now\n";
-            }
-            else if (id == 2)
-            {
-                std::cout << "Exit Now\n";
-            }
-        }
-    }
+  virtual  bool modal_handler();
    virtual int button_handler()
     {
         int x = mousePos.y;

@@ -49,7 +49,7 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r, int color = 0)
     rect.w = dim::size;
     rect.h = dim::size;
     // support alpha
-    SDL_SetRenderDrawBlendMode(win->render, SDL_BLENDMODE_BLEND);
+
     // set render_draw_color based on color parameter
     if (color == 0)
     {
@@ -121,8 +121,8 @@ void GameScreen::load_other(){
     SDL_Surface *image = IMG_Load("assets/timer.png");
     timer_texture = SDL_CreateTextureFromSurface(win->render, image);
 
-    exitbtn.init(win->render, "assets/exit.png", dim::height + (dim::sidebar - 139) / 2, 430);
-    resbtn.init(win->render, "assets/restart.png", dim::height + (dim::sidebar - 139) / 2, 430 + 55);
+    exitbtn.init(win->render, "exit", dim::height + (dim::sidebar - 139) / 2, 430);
+    resbtn.init(win->render, "restart", dim::height + (dim::sidebar - 139) / 2, 430 + 55);
     SDL_FreeSurface(image);
 }
 void GameScreen::render()
@@ -374,9 +374,11 @@ void GameScreen::event_handle(SDL_Event &e)
         {
             if (modal.is_Clicked(x, y))
             {
-                modal_handler();
-            }
+                if(modal_handler()){
+
             render();
+                }
+            }
             break;
         }
 
@@ -497,3 +499,26 @@ void GameScreen::event_handle(SDL_Event &e)
 
 
 }
+bool GameScreen::modal_handler()
+    {
+        int x = mousePos.y;
+        int y = mousePos.x;
+        modal.is_active = false;
+        int id = (modal.is_Clicked(x, y) + 1) / 2;
+        if (modal.is_Clicked(x, y) % 2 == 1)
+        {
+            if (id == 1)
+            {
+                std::cout << "Restart Now\n";
+                  win->set_screen(1);
+                  return 0;
+            }
+            else if (id == 2)
+            {
+                win->set_screen(0);
+                return 0;
+                
+            }
+        }
+        return 1;
+    }

@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include <string>
+
 ChessPiece get_piece(char a)
 {
     int color, rank;
@@ -85,6 +86,7 @@ public:
     }
     void init_game(std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -")
     {
+        enpasant=Box();
         gameState = 1;
         is_castling_move = false;
         parse_fen(fen);
@@ -383,11 +385,11 @@ private:
 
         if (currentTurn == 0)
         {
-            std::cout << "White's Turn" << std ::endl;
+            // std::cout << "White's Turn" << std ::endl;
         }
         else
         {
-            std::cout << "Black's Turn" << std ::endl;
+            // std::cout << "Black's Turn" << std ::endl;
         }
         if (check_checkmate(currentTurn) == 1)
         {
@@ -647,6 +649,46 @@ private:
         return 1;
     }
     void generateMoves();
-
+    public:
     bool check_checkmate(int);
+    
+    int depth_test(int desired,int depth=0){
+      
+        if(depth==desired){
+            return 0;
+        }
+        
+        int total=0;
+        if(depth==desired-1){
+
+        return countMoves();
+        }
+        //depth analysis
+        for(int x=0;x<8;x++){
+
+            for(int y=0;y<8;y++){
+                if(chessBoard[x][y].rank!=0 && chessBoard[x][y].color==currentTurn)
+                {
+                    if(chessBoard[x][y].totalmoves==0) continue;
+                    for(int i=0;i<chessBoard[x][y].totalmoves;i++){
+                        std::string fen=get_fen();
+                        handle_move(chessBoard[x][y],chessBoard[x][y].moves[i]);
+                    
+                        update_state();
+                       if(get_gameState()==0) {
+                        continue;
+                       };
+                        Board *b=new Board();
+                        b->init_game(get_fen());
+                        total+=b->depth_test(desired,depth+1);
+                      
+                        delete b;
+                        init_game(fen);
+                    }
+                }
+                
+            }
+        }
+        return total;
+    }
 };

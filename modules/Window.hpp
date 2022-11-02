@@ -4,6 +4,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "./GameScreen.hpp"
 #include "./PuzzleScreen.hpp"
+#include "./MenuScreen.hpp"
 
 using namespace std;
 // class to render SDL window
@@ -19,6 +20,9 @@ public:
     SDL_Window *window = nullptr;
     Screen *screen = nullptr;
     bool isClosed() const { return closed; }
+    void close_window(){
+        closed=true;
+    }
     SDL_Surface *surface = nullptr;
     SDL_Renderer *render = NULL;
     // GameScreen g;
@@ -38,9 +42,10 @@ public:
         }
         // create renderer for window
         render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
         // set window pointer in gameScreen to current
         // set current screen as gameScreen g
-        screen = new PuzzleScreen(this);
+        set_screen(0);
         // gameloop
         while (!closed)
         {
@@ -54,10 +59,27 @@ public:
                 }
                 // handle events
                 handle_event(ev);
+            
             }
         }
+   
     }
+    void set_screen(int sc){
+        delete screen;
+        if(sc==0){
+            screen=new MenuScreen(this);
+       
 
+        }else if(sc==1){
+            screen=new GameScreen(this);
+        }
+        else if(sc==2){
+            screen=new PuzzleScreen(this);
+        }
+    
+        screen->render();
+       
+    };
     void handle_event(SDL_Event &e)
     {
 

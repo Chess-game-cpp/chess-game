@@ -16,7 +16,7 @@ public:
         if (button_texture == NULL)
         {
 
-            SDL_Surface *image = IMG_Load(b_text.c_str());
+            SDL_Surface *image = IMG_Load(("assets/buttons/"+b_text+".png").c_str());
             button_rect.w = image->w;
             button_rect.h = image->h;
             button_texture = SDL_CreateTextureFromSurface(render, image);
@@ -64,8 +64,8 @@ public:
         rect.y = y + (h / 2) - (dim::modal_h / 2);
         rect.w = dim::modal_w;
         rect.h = dim::modal_h;
-        yesbtn.init(render, "assets/yes.png", (rect.x + dim::modal_mv), (rect.y + rect.h - dim::modal_mh)-36);
-        cancelbtn.init(render, "assets/cancel.png", (rect.x + rect.w - dim::modal_mv-81), (rect.y + rect.h - dim::modal_mh)-36);
+        yesbtn.init(render, "yes", (rect.x + dim::modal_mv), (rect.y + rect.h - dim::modal_mh)-36);
+        cancelbtn.init(render, "cancel", (rect.x + rect.w - dim::modal_mv-81), (rect.y + rect.h - dim::modal_mh)-36);
     }
     void set(int id, std::string ask)
     {

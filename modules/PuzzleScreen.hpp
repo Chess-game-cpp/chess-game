@@ -68,6 +68,7 @@ protected:
         game.init_game(fenn);
         move_bot();
     }
+
     void move_bot()
     {
         render();
@@ -75,6 +76,9 @@ protected:
         parse_move();
         game.piece_selection(current_position.y, current_position.x);
         game.piece_move(next_position.x, next_position.y);
+        if(game.get_gameState()==3){
+            game.promote_pawn(5);
+        }
         fenn = game.get_fen();
         hint = false;
         render();
@@ -132,31 +136,11 @@ protected:
             }
           
     }
+    if(game.get_gameState()==3){
+          game.promote_pawn(5);
     }
-    void modal_handler()
-    {
-        int x = mousePos.y;
-        int y = mousePos.x;
-        modal.is_active = false;
-        int id = (modal.is_Clicked(x, y) + 1) / 2;
-        if (modal.is_Clicked(x, y) % 2 == 1)
-        {
-            if (id == 1)
-            {
-                if(!hint){
-                hint_taken+=1;
-               hint=true;
-
-                }
-             
-            }
-            else if (id == 2)
-            {
-                
-                std::cout << "Exit Now\n";
-            }
-        }
     }
+    bool modal_handler();
     virtual int button_handler()
     {
         int x = mousePos.y;

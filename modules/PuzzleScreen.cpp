@@ -71,10 +71,10 @@ void PuzzleScreen::load_assets()
 {
    //  std::cout << "ol";
 
-   exitbtn.init(win->render, "assets/exit.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 65);
-   tabtn.init(win->render, "assets/tryagain.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
-   nxtbtn.init(win->render, "assets/next.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
-   hintbtn.init(win->render, "assets/hint.png", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
+   exitbtn.init(win->render, "exit", dim::height + (dim::sidebar - 139) / 2, dim::height - 65);
+   tabtn.init(win->render, "tryagain", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
+   nxtbtn.init(win->render, "next", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
+   hintbtn.init(win->render, "hint", dim::height + (dim::sidebar - 139) / 2, dim::height - 120);
    fstream file("assets/puzzle.csv");
    std::string line;
    while (std::getline(file,line))
@@ -91,3 +91,29 @@ void PuzzleScreen::show_hint()
       create_rectangle(current_position.y, current_position.x, win->render, 7);
    }
 }
+bool PuzzleScreen::modal_handler()
+    {
+        int x = mousePos.y;
+        int y = mousePos.x;
+        modal.is_active = false;
+        int id = (modal.is_Clicked(x, y) + 1) / 2;
+        if (modal.is_Clicked(x, y) % 2 == 1)
+        {
+            if (id == 1)
+            {
+                if(!hint){
+                hint_taken+=1;
+               hint=true;
+
+                }
+             
+            }
+            else if (id == 2)
+            {
+                
+                win->set_screen(0);
+                return 0;
+            }
+        }
+        return 1;
+    }
