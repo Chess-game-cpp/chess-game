@@ -147,6 +147,33 @@ void GameOptionScreen::event_handle(SDL_Event & e){
  
     switch (e.type)
     {
+    case SDL_KEYDOWN:
+        if(players.get_selected()){
+        int len=win->players[players.get_selected()-1].length();
+        if(e.key.keysym.sym>96 && e.key.keysym.sym<=122){
+            if(len<12){
+            win->players[players.get_selected()-1]+=char(e.key.keysym.sym);
+
+            }
+        }else if(e.key.keysym.sym==8){
+            if(len>1){
+            win->players[players.get_selected()-1].erase(len-1,len);
+            }else{
+            win->players[players.get_selected()-1]=" ";
+                
+            }
+            }
+        else{
+
+            std::cout << e.key.keysym.sym<<"\n";
+        }
+
+        }
+        render();
+        SDL_Delay(50);
+        break;
+       
+    
     case SDL_MOUSEBUTTONDOWN:
 
         SDL_GetMouseState(&x, &y);
@@ -181,6 +208,12 @@ void GameOptionScreen::event_handle(SDL_Event & e){
                             default:
                             break;
 
+                        }
+                        if(win->players[0]==" "){
+                            win->players[0]="WHITE";
+                        }
+                        if(win->players[1]==" "){
+                           win->players[1]="BLACK";
                         }
                         win->set_screen(1);
                     }

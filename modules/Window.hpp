@@ -33,8 +33,8 @@ public:
     Window(const std::string &title, int width, int height)
     {
         timer=0;
-        players[0]="WHITE";
-        players[1]="BLACK";
+        players[0]=" ";
+        players[1]=" ";
         this->title = title;
         this->width = width;
         this->height = height;
