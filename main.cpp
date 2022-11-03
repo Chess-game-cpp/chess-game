@@ -23,7 +23,7 @@ namespace dim
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "modules/TextTextureManager.cpp"
+#include "modules/TextureManager.cpp"
 #include "modules/Window.hpp"
 #include "modules/Board.cpp"
 #include "modules/GameScreen.cpp"

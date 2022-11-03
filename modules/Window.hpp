@@ -49,7 +49,7 @@ public:
             SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
         // set window pointer in gameScreen to current
         // set current screen as gameScreen g
-        set_screen(0);
+        set_screen(3);
         // gameloop
         while (!closed)
         {
@@ -79,8 +79,10 @@ public:
         }
         else if(sc==2){
             screen=new PuzzleScreen(this);
+        }else if(sc==3){
+
+            screen=new GameOptionScreen(this);
         }
-    
         screen->render();
        
     };

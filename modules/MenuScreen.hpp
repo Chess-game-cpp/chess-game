@@ -4,18 +4,39 @@
 #include "Screen.hpp"
 #include "Component.cpp"
 #include <SDL2/SDL.h>
-class MenuScreen:public Screen{
-     Modal modal;
-     Box mousePos;
-     Button gameMode;
-     Button puzzleMode;
-     Button exit;
-     SDL_Texture *bgtexture;
+class MenuScreen : public Screen
+{
+    Modal modal;
+    Box mousePos;
+    Button gameMode;
+    Button puzzleMode;
+    Button exit;
+    SDL_Texture *bgtexture;
+
+public:
+    MenuScreen(Window *);
+    ~MenuScreen()
+    {
+        SDL_DestroyTexture(bgtexture);
+    }
+    void render();
+    void event_handle(SDL_Event &);
+};
+class GameOptionScreen : public Screen
+{
+    Modal modal;
+    Box mousePos;
+    Button goBack;
+    Button startGame;
+    ButtonGroup <2> players;
+    ButtonGroup <4> limits;
+    SDL_Texture * bgtexture;
     public:
-MenuScreen(Window * );
-~MenuScreen(){
-    SDL_DestroyTexture(bgtexture);
-}
-void render();
-void event_handle(SDL_Event & );
+    GameOptionScreen(Window *);
+    ~GameOptionScreen(){
+        SDL_DestroyTexture(bgtexture);
+    }
+   void render();
+    void event_handle(SDL_Event &);  
+
 };

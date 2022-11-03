@@ -122,11 +122,15 @@ protected:
                     wrong_move += 1;
                     state=states::wrong;
                 }
+    if(game.get_gameState()==3){
+          game.promote_pawn(5);
+    }
                 if(moves.size()==current_move+1 && state!=states::wrong){
                          puzzle_solved += 1;
                     state=states::solved;
                     
                 }
+                
              
                 if (state==states::idle)
                 {
@@ -136,9 +140,7 @@ protected:
             }
           
     }
-    if(game.get_gameState()==3){
-          game.promote_pawn(5);
-    }
+
     }
     bool modal_handler();
     virtual int button_handler()

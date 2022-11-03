@@ -23,7 +23,18 @@ namespace TextureManager
 
         font = TTF_OpenFont(font_name.c_str(), font_size);
     }
+    SDL_Texture * load_image_texture(std::string image,SDL_Renderer * render ,SDL_Rect * rect=NULL){
+         SDL_Surface *surface = IMG_Load(image.c_str());
+         if(rect!=NULL){
+            rect->w = surface->w;
+            rect->h = surface->h;
 
+         }
+            SDL_Texture * texture = SDL_CreateTextureFromSurface(render, surface);
+            SDL_FreeSurface(surface);
+            return texture;
+
+    }
     void render_text(std::string s, SDL_Color &color, SDL_Renderer *&render, SDL_Rect &rect, int v_align = 0, int h_align = 0)
     {
         SDL_Surface *text = TTF_RenderText_Solid(font, s.c_str(), color);
