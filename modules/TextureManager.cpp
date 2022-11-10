@@ -2,6 +2,11 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL.h>
 #include <iostream>
+//colors
+SDL_Color BLACK = {0, 0, 0, 255};
+SDL_Color GREEN = {0, 255, 0, 255};
+SDL_Color BLUE = {0, 0, 255, 255};
+SDL_Color RED = {255, 0, 0, 255};
 namespace TextureManager
 {
     TTF_Font *font = NULL;

@@ -1,16 +1,18 @@
-#pragma once
 namespace dim
 {
-    const int height = 672;
-    const int width = 950;
-    const int size = height / 8;
-    const int sidebar = width - height;
-    const int modal_h=134;
-    const int modal_w=332;
-    const int modal_mv=20;
-    const int modal_mh=20;
-    
+  const int height = 672;
+  const int width = 950;
+  const int size = height / 8;
+  const int sidebar = width - height;
+  const int modal_h = 134;
+  const int modal_w = 332;
+  const int modal_mv = 20;
+  const int modal_mh = 20;
+
 };
+Mix_Chunk *sounds[10];
+
+#pragma once
 #include <iostream>
 #include <SDL2/SDL_mixer.h>
 #include "TextureManager.cpp"
@@ -70,31 +72,30 @@ public:
   {
   }
 };
-//namespace containing dimensions window components
+// namespace containing dimensions window components
 
-//global varaiables declaration
+// global varaiables declaration
 Box mousePos;
-Mix_Chunk *sounds[10];
 Modal modal;
-//functions
+
+// functions
 void load_sounds()
 {
-    // start-1
-    // move-2
-    // capture-3
-    // castling-4
-    // check - 5
-    // gameover-6
-    for (int i = 0; i < 6; i++)
-    {
-        sounds[i] = Mix_LoadWAV(("assets/sounds/" + to_string(i + 1) + ".wav").c_str());
-    }
+  // start-1
+  // move-2
+  // capture-3
+  // castling-4
+  // check - 5
+  // gameover-6
+  for (int i = 0; i < 7; i++)
+  {
+    sounds[i] = Mix_LoadWAV(("assets/sounds/" + to_string(i + 1) + ".wav").c_str());
+  }
 }
 void free_sounds()
 {
-    for (int i = 0; i < 6; i++)
-    {
-        Mix_FreeChunk(sounds[i]);
-    }
+  for (int i = 0; i < 10; i++)
+  {
+    Mix_FreeChunk(sounds[i]);
+  }
 }
-

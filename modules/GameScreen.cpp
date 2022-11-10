@@ -101,6 +101,14 @@ void GameScreen::create_rectangle(int x, int y, SDL_Renderer *&r, int color = 0)
         // hint rect
         SDL_SetRenderDrawColor(r, 245, 181, 57, 250);
     }
+    else if(color==8){
+        SDL_SetRenderDrawColor(r, 178, 151, 0, 170);
+        
+    }
+    else if(color==9){
+        SDL_SetRenderDrawColor(r, 178, 151, 19, 190);
+
+    }
     SDL_RenderFillRect(r, &rect); // create_rect
     // reset render color
     SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
@@ -141,6 +149,11 @@ void GameScreen::render()
 }
 std::string GameScreen::mstotime(int ms)
 {
+    if(ms<0){
+        ms=0;
+    }else{
+        ms+=999;
+    }
     int second = ms / 1000;
     int min = second / 60;
     second = second % 60;
@@ -152,7 +165,11 @@ void GameScreen::render_chessgame(){
      // create board in screen
     create_chess_board();
     ChessPiece p;
+    //  if(game.get_currentMove()[0].is_valid()){
+    //     create_rectangle(game.get_currentMove()[0].y, game.get_currentMove()[0].x, win->render, 8);
+    //     create_rectangle(game.get_currentMove()[1].y, game.get_currentMove()[1].x, win->render, 9);
 
+    //     }
     if (game.get_gameState() == 1 || game.get_gameState() == 4)
     {
         // if current gameState is idle
@@ -181,6 +198,8 @@ void GameScreen::render_chessgame(){
         // if selection mode
         // grey rect for selected piece
         create_rectangle((game.get_currentChessPiece())->get_position().y, (game.get_currentChessPiece())->get_position().x, win->render, 1);
+        
+   
         for (int i = 0; i < (game.get_currentChessPiece())->totalmoves; i++)
         {
             // loop through moves of selected piece
@@ -252,7 +271,7 @@ void GameScreen::render_sidebar(){
 
     SDL_RenderCopy(win->render, btexture, &rec2, &rec3);
     // rendeer player detaisl
-    SDL_Color BLACK = {0, 0, 0, 255};
+
     for (int i = 0; i < 2; i++)
     {
         int lx = dim::height + 10;
@@ -482,6 +501,7 @@ void GameScreen::event_handle(SDL_Event &e)
       int turn=game.get_turn();
       game.piece_move(y,x,dat);
       if(turn!=game.get_turn()){
+        timer.switch_timer();
         if(game.get_gameState()==0){
               Mix_PlayChannel( -1, sounds[5], 0 );
 

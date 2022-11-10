@@ -113,7 +113,6 @@ rect.y=0;
 rect.w=dim::width;
 rect.h=dim::height;
 SDL_RenderCopy(win->render,bgtexture,NULL,&rect);
-SDL_Color BLACK ={0,0,0,255};
 SDL_Rect rect2={64,199,244,0};
 TextureManager::set_font("assets/bebasneue.ttf",30);
 TextureManager::render_text("WHITE PLAYER",BLACK,win->render,rect2,0,1);

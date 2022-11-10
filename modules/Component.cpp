@@ -8,12 +8,14 @@ class Button
     bool hover;
     bool select;
     SDL_Texture *button_texture[3];
+    Mix_Chunk * sound;    
 
 public:
     bool is_selected;
     bool free;
     Button()
     {
+        sound=NULL;
         free=true;
         is_selected = false;
         for (int i = 0; i < 3; i++)
@@ -21,17 +23,21 @@ public:
             button_texture[i] = NULL;
         }
     }
-    Button(SDL_Renderer *render, std::string b_text, int bx, int by, bool hover = false, bool select = false)
+    Button(SDL_Renderer *render, std::string b_text, int bx, int by, bool hover = false, bool select = false,int sound=0)
     {
+    
         is_selected = false;
         for (int i = 0; i < 3; i++)
         {
             button_texture[i] = NULL;
         }
-        init(render,b_text,bx,by,hover,select);
+        init(render,b_text,bx,by,hover,select,sound);
     }
-    void init(SDL_Renderer *render, std::string b_text, int bx, int by, bool hover = false, bool select = false)
+    void init(SDL_Renderer *render, std::string b_text, int bx, int by, bool hover = false, bool select = false,int sound=5)
     {
+        // if(sound!=0){
+            this->sound=sounds[sound-1];
+        // }
         this->hover = hover;
         this->select = select;
         if (button_texture[0] == NULL)
@@ -64,9 +70,9 @@ public:
     bool is_Clicked(int x, int y)
     {
         bool value=((x > button_rect.x && x < (button_rect.x + button_rect.w)) && (y > button_rect.y && y < (button_rect.y + button_rect.h)));
-        // if(value){
-            
-        // }
+        if(value && this->sound!=NULL){
+              Mix_PlayChannel( -1, this->sound, 0 );
+        }
         return value ;
     }
 
@@ -115,7 +121,6 @@ public:
     }
     void render(SDL_Renderer *render)
     {
-        SDL_Color BLACK = {0, 0, 0, 255};
         SDL_Rect txrect = rect;
         // txrect.x += dim::modal_mv;
         txrect.y += dim::modal_mh;

@@ -4,12 +4,15 @@ class Timer
 {
     int time1;
     int time2;
+    int starttime;
+    int current;
     bool active;
     SDL_TimerID id;
 
 
 public:
     Timer(){
+        starttime=0;
         active=false;
     }
     bool is_active(){
@@ -18,37 +21,41 @@ public:
     void set_timer(int time)
     {
         if(time<=0) return;
+        starttime=SDL_GetTicks64();
         active=true;
         time1 = time2 = time;
+        current=0;
 
     }
     int get_time(int player)
     {
         if (player == 0)
         {
-            return time1;
+            return time1-(current==0?(SDL_GetTicks64()-starttime):0);
         }
         else if (player == 1)
         {
-            return time2;
+            return time2-(current==1?(SDL_GetTicks64()-starttime):0);
         }
         return 0;
     }
-    int adjust_time(int player)
+    void switch_timer()
     {
-        int &time = player ? time2 : time1;
-        time -= TIMER;
-        if (time == 0)
-        {
+        if(!active) return;
+        std::cout <<"hello";
+    int * time;
+    if(current==0){
+    
+       time=&time1;
+    }else{
+    
+        time=&time2;
 
-            return 2;
-        }
-        if (time % 1000 == 0)
-        {
-            return 1;
-        }
-
-        return 0;
+    }
+    current=!current;
+    int currenttime=SDL_GetTicks64();
+    *time-=currenttime-starttime;
+    starttime=currenttime;
     }
     void set_inactive(){
         active=false;

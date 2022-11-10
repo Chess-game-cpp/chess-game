@@ -23,7 +23,6 @@ protected:
     SDL_Texture *btexture;
     bool rendering;
     bool dragging;
-   
 
 public:
     // functions declartaions
@@ -44,14 +43,8 @@ public:
 private:
     static Uint32 timer_update(Uint32 interval, void *data)
     {
-        int s = SDL_GetTicks64();
         GameScreen *gmscrn = (reinterpret_cast<GameScreen *>(data));
-        int time = gmscrn->timer.adjust_time(gmscrn->game.get_turn());
-        if (time == 1)
-        {
-            gmscrn->render();
-        }
-        else if (time == 2)
+        if (gmscrn->timer.get_time(0) <= 0 || gmscrn->timer.get_time(1) <= 0)
         {
             gmscrn->game.times_up();
             gmscrn->render();
@@ -59,7 +52,8 @@ private:
             return 0;
         }
 
-        return TIMER - (SDL_GetTicks64() - s);
+ gmscrn->render();
+        return TIMER;
     }
     std::string mstotime(int);
 
@@ -71,11 +65,11 @@ protected:
     void render_chessgame();
     virtual void render_sidebar();
     virtual void handle_move(int, int, bool = true);
- virtual void show_hint(){
-
- }
-  virtual  bool modal_handler();
-   virtual int button_handler()
+    virtual void show_hint()
+    {
+    }
+    virtual bool modal_handler();
+    virtual int button_handler()
     {
         int x = mousePos.x;
         int y = mousePos.y;

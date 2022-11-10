@@ -88,6 +88,7 @@ public:
     }
     void init_game(std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -")
     {
+     
         enpasant=Box();
         gameState = 1;
         is_castling_move = false;

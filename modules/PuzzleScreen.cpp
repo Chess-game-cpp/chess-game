@@ -19,10 +19,7 @@ void PuzzleScreen::render_sidebar()
 
    SDL_RenderCopy(win->render, btexture, &rec2, &rec3);
    // title mode
-   SDL_Color BLACK = {0, 0, 0, 255};
-   SDL_Color GREEN = {0, 255, 0, 255};
-   SDL_Color BLUE = {0,0, 255, 255};
-   SDL_Color RED = {255, 0, 0, 255};
+ 
    TextureManager::set_font("assets/bebasneue.ttf", 25);
    rec3.h = 0;
    rec3.y = 50;
