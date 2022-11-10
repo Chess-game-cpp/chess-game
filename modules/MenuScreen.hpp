@@ -6,12 +6,11 @@
 #include <SDL2/SDL.h>
 class MenuScreen : public Screen
 {
-    Modal modal;
-    Box mousePos;
     Button gameMode;
     Button puzzleMode;
     Button exit;
     SDL_Texture *bgtexture;
+    
 
 public:
     MenuScreen(Window *);
@@ -24,8 +23,6 @@ public:
 };
 class GameOptionScreen : public Screen
 {
-    Modal modal;
-    Box mousePos;
     Button goBack;
     Button startGame;
     ButtonGroup <2> players;

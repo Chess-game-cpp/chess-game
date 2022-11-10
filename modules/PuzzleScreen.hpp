@@ -75,7 +75,7 @@ protected:
         SDL_Delay(1200);
         parse_move();
         game.piece_selection(current_position.y, current_position.x);
-        game.piece_move(next_position.x, next_position.y);
+        GameScreen::handle_move(next_position.x,next_position.y);
         if(game.get_gameState()==3){
             game.promote_pawn(5);
         }
@@ -109,6 +109,9 @@ protected:
         
             int turn = game.get_turn();
             GameScreen::handle_move(y, x, dat);
+            if(game.get_gameState()==3){
+          game.promote_pawn(5);
+          }
             if (turn != game.get_turn())
             {
                 if (chk)
@@ -122,9 +125,7 @@ protected:
                     wrong_move += 1;
                     state=states::wrong;
                 }
-    if(game.get_gameState()==3){
-          game.promote_pawn(5);
-    }
+    
                 if(moves.size()==current_move+1 && state!=states::wrong){
                          puzzle_solved += 1;
                     state=states::solved;
@@ -145,8 +146,8 @@ protected:
     bool modal_handler();
     virtual int button_handler()
     {
-        int x = mousePos.y;
-        int y = mousePos.x;
+        int x = mousePos.x;
+        int y = mousePos.y;
         if (hintbtn.is_Clicked(x, y))
         {
                 if(state==states::idle && !hint){

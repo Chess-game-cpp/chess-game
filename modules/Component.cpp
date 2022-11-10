@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <iostream>
+
 class Button
 {
     SDL_Rect button_rect;
@@ -62,7 +63,11 @@ public:
 
     bool is_Clicked(int x, int y)
     {
-        return ((x > button_rect.x && x < (button_rect.x + button_rect.w)) && (y > button_rect.y && y < (button_rect.y + button_rect.h)));
+        bool value=((x > button_rect.x && x < (button_rect.x + button_rect.w)) && (y > button_rect.y && y < (button_rect.y + button_rect.h)));
+        // if(value){
+            
+        // }
+        return value ;
     }
 
     void render(SDL_Renderer *&render)

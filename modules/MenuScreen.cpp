@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 MenuScreen::MenuScreen(Window * win){
+    modal.is_active=false;
     this->win=win;
     //load background assets;
     bgtexture = TextureManager::load_image_texture("assets/bg.png",win->render);
@@ -36,19 +37,17 @@ void MenuScreen::render(){
 }
 void MenuScreen::event_handle(SDL_Event & e){
    // handle events in Game Screen
-    int x, y;
+   
  
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
 
-        SDL_GetMouseState(&x, &y);
-        mousePos.x = y;
-        mousePos.y = x;
+      
         if(modal.is_active){
 
-            if(modal.is_Clicked(x,y)){
-                if(modal.is_Clicked(x,y)==1){
+            if(modal.is_Clicked(mousePos.x,mousePos.y)){
+                if(modal.is_Clicked(mousePos.x,mousePos.y)==1){
                     win->close_window();
                 }
                 else{
@@ -61,12 +60,12 @@ void MenuScreen::event_handle(SDL_Event & e){
             break;
         }
         
-        if(gameMode.is_Clicked(x,y)){
+        if(gameMode.is_Clicked(mousePos.x,mousePos.y)){
             win->set_screen(3);
-        }else if(puzzleMode.is_Clicked(x,y)){
+        }else if(puzzleMode.is_Clicked(mousePos.x,mousePos.y)){
             win->set_screen(2);
 
-        }else if(exit.is_Clicked(x,y)){
+        }else if(exit.is_Clicked(mousePos.x,mousePos.y)){
             modal.is_active=true;
             modal.set(1,"Do you want to exit game?");
             render();
@@ -76,9 +75,7 @@ void MenuScreen::event_handle(SDL_Event & e){
         break;
 
     case SDL_MOUSEMOTION:
-        SDL_GetMouseState(&x, &y);
-        mousePos.x = y;
-        mousePos.y = x;
+
         break;
         // check if piece is dragging
 
@@ -143,14 +140,15 @@ SDL_RenderPresent(win->render);
 
 }
 void GameOptionScreen::event_handle(SDL_Event & e){
- int x, y;
  
     switch (e.type)
     {
     case SDL_KEYDOWN:
+    //    std::cout<<e.key.type<<std::endl;
         if(players.get_selected()){
         int len=win->players[players.get_selected()-1].length();
-        if(e.key.keysym.sym>96 && e.key.keysym.sym<=122){
+        if((e.key.keysym.sym>96 && e.key.keysym.sym<=122) || (e.key.keysym.sym>47 && e.key.keysym.sym<=57)){
+         
             if(len<12){
             win->players[players.get_selected()-1]+=char(e.key.keysym.sym);
 
@@ -163,11 +161,7 @@ void GameOptionScreen::event_handle(SDL_Event & e){
                 
             }
             }
-        else{
-
-            std::cout << e.key.keysym.sym<<"\n";
-        }
-
+      
         }
         render();
         SDL_Delay(50);
@@ -176,21 +170,18 @@ void GameOptionScreen::event_handle(SDL_Event & e){
     
     case SDL_MOUSEBUTTONDOWN:
 
-        SDL_GetMouseState(&x, &y);
-        mousePos.x = y;
-        mousePos.y = x;
         if(modal.is_active){
 
-            if(modal.is_Clicked(x,y)){
-                if(modal.is_Clicked(x,y)%2==0){
+            if(modal.is_Clicked(mousePos.x,mousePos.y)){
+                if(modal.is_Clicked(mousePos.x,mousePos.y)%2==0){
                     modal.is_active=false;
                     render();
                 }
                 else{
-                    if(modal.is_Clicked(x,y)==1){
+                    if(modal.is_Clicked(mousePos.x,mousePos.y)==1){
                         win->set_screen(0);
 
-                    }else if (modal.is_Clicked(x,y)==3){
+                    }else if (modal.is_Clicked(mousePos.x,mousePos.y)==3){
                         switch(limits.get_selected()){
                             case 1:
                             win->timer=0;
@@ -224,15 +215,15 @@ void GameOptionScreen::event_handle(SDL_Event & e){
             }
             break;
         }
-        players.update_selection(x,y);
+        players.update_selection(mousePos.x,mousePos.y);
 
         
-        limits.update_selection(x,y);
-        if(goBack.is_Clicked(x,y)){
+        limits.update_selection(mousePos.x,mousePos.y);
+        if(goBack.is_Clicked(mousePos.x,mousePos.y)){
             modal.is_active=true;
             modal.set(1,"Do you want to go back to menu?");
         
-        }else if(startGame.is_Clicked(x,y)){
+        }else if(startGame.is_Clicked(mousePos.x,mousePos.y)){
             modal.is_active=true;
             modal.set(2,"Do you want to start game?");
             
@@ -244,9 +235,7 @@ void GameOptionScreen::event_handle(SDL_Event & e){
         break;
 
     case SDL_MOUSEMOTION:
-        SDL_GetMouseState(&x, &y);
-        mousePos.x = y;
-        mousePos.y = x;
+     
         break;
         // check if piece is dragging
 

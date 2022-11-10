@@ -7,6 +7,7 @@ using namespace std;
 
 GameScreen::GameScreen(Window *win, int time)
 {
+     Mix_PlayChannel( -1, sounds[0], 0 );
     // Default constructor
     modal.is_active = false;
     this->win = win;
@@ -109,21 +110,11 @@ void GameScreen::load_assets()
 {
     // load assets
     // chesspieces
-    SDL_Surface *image = IMG_Load("assets/pieces.png");
-    texture = SDL_CreateTextureFromSurface(win->render, image);
-    image = IMG_Load("assets/bg.png");
-    btexture = SDL_CreateTextureFromSurface(win->render, image);
-    load_other();
-    SDL_FreeSurface(image);
-}
-void GameScreen::load_other(){
-
-    SDL_Surface *image = IMG_Load("assets/timer.png");
-    timer_texture = SDL_CreateTextureFromSurface(win->render, image);
-
+    texture = TextureManager::load_image_texture("assets/pieces.png",win->render);
+    btexture = TextureManager::load_image_texture("assets/bg.png",win->render);
+    timer_texture = TextureManager::load_image_texture("assets/timer.png",win->render);
     exitbtn.init(win->render, "exit", dim::height + (dim::sidebar - 139) / 2, 430);
     resbtn.init(win->render, "restart", dim::height + (dim::sidebar - 139) / 2, 430 + 55);
-    SDL_FreeSurface(image);
 }
 void GameScreen::render()
 {
@@ -227,8 +218,9 @@ void GameScreen::render_chessgame(){
     }
     if (dragging && game.get_gameState() == 2)
     {
+        
         // render the piece that is dragging in screen
-        render_chesspiece(mousePos.x - dim::size / 2, mousePos.y - dim::size / 2, abs(game.get_currentChessPiece()->get_rank() - 6), game.get_currentChessPiece()->get_color());
+        render_chesspiece(mousePos.y - dim::size / 2, mousePos.x - dim::size / 2, abs(game.get_currentChessPiece()->get_rank() - 6), game.get_currentChessPiece()->get_color());
     }
     // check for pawn promotion
     if (game.get_gameState() == 3)
@@ -361,18 +353,16 @@ void GameScreen::render_chesspiece(int x, int y, int rank, int color, int size)
 void GameScreen::event_handle(SDL_Event &e)
 {
     // handle events in Game Screen
-    int x, y;
+    int x,y;
+
  
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
 
-        SDL_GetMouseState(&x, &y);
-        mousePos.x = y;
-        mousePos.y = x;
         if (modal.is_active)
         {
-            if (modal.is_Clicked(x, y))
+            if (modal.is_Clicked(mousePos.x, mousePos.y))
             {
                 if(modal_handler()){
 
@@ -385,8 +375,8 @@ void GameScreen::event_handle(SDL_Event &e)
         
         if(button_handler())break;
         
-        x = (x) / (dim::size);
-        y = (y) / (dim::size);
+        x= (mousePos.x) / (dim::size);
+        y = (mousePos.y) / (dim::size);
         // button_click handling
 
         if (game.get_gameState() == 3)
@@ -438,11 +428,8 @@ void GameScreen::event_handle(SDL_Event &e)
         if (dragging)
         {
             dragging = false;
-            SDL_GetMouseState(&x, &y);
-            mousePos.x = y;
-            mousePos.y = x;
-            x = (x) / (dim::size);
-            y = y / (dim::size);
+            x = mousePos.x / (dim::size);
+            y = mousePos.y / (dim::size);
             // check if clicked inside the board
             if (x >= 0 && x < 8 && y >= 0 && y < 8)
             {
@@ -471,12 +458,9 @@ void GameScreen::event_handle(SDL_Event &e)
                 render();
                 break;
             }
-            SDL_GetMouseState(&x, &y);
-            mousePos.x = y;
-            mousePos.y = x;
 
-            x = (x) / (dim::size);
-            y = (y) / (dim::size);
+            int x = (mousePos.x) / (dim::size);
+            int y = (mousePos.y) / (dim::size);
 
             if (x >= 0 && x < 8 && y >= 0 && y < 8)
             {
@@ -495,14 +479,35 @@ void GameScreen::event_handle(SDL_Event &e)
     }
 }
  void GameScreen::handle_move(int y,int x,bool dat){
-    game.piece_move(y,x,dat);
+      int turn=game.get_turn();
+      game.piece_move(y,x,dat);
+      if(turn!=game.get_turn()){
+        if(game.get_gameState()==0){
+              Mix_PlayChannel( -1, sounds[5], 0 );
+
+        }else if(game.is_checkmate()){
+              Mix_PlayChannel( -1, sounds[4], 0 );
+
+        }else if(game.is_castling()){
+              Mix_PlayChannel( -1, sounds[3], 0 );
+
+        }
+        else if(game.is_capture_move()){
+              Mix_PlayChannel( -1, sounds[2], 0 );
+
+        }else{
+              Mix_PlayChannel( -1, sounds[1], 0 );
+
+        }
+      }
+ 
 
 
 }
 bool GameScreen::modal_handler()
     {
-        int x = mousePos.y;
-        int y = mousePos.x;
+        int x = mousePos.x;
+        int y = mousePos.y;
         modal.is_active = false;
         int id = (modal.is_Clicked(x, y) + 1) / 2;
         if (modal.is_Clicked(x, y) % 2 == 1)

@@ -13,50 +13,7 @@ color
 */
 // array of chess piece character symbols
 char pcs[7] = {' ', 'p', 'r', 'n', 'b', 'q', 'k'};
-// Box class to represent square
-class Box
-{
-public:
-  int x; // xpos
-  int y; // y pos
-  Box()
-  {
-    x = -1;
-    y = -1;
-  }
-  Box(int x, int y)
-  {
-    this->x = x;
-    this->y = y;
-  }
-  // check if two Box objects have same value
-  bool operator==(Box a)
-  {
-    if ((this->x == a.x) && (this->y == a.y))
-    {
-      return 1;
-    }
-    return 0;
-  }
 
-  void display()
-  {
-    // display value og box
-    std::cout << x << "," << y << std::endl;
-  }
-  bool is_valid()
-  {
-    // box is valid
-    if (x < 0 || y < 0)
-    {
-      return 0;
-    }
-    return 1;
-  }
-  void setNull()
-  {
-  }
-};
 
 // ChessPiece class to represent a chess piece
 class ChessPiece

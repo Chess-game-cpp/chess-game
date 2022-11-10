@@ -68,9 +68,11 @@ class Board
     Box enpasant;            // enpasant available box
     int gameState;           // track gameState
     bool is_castling_move;   // is last move castling
+    bool is_captured;       //if piece was captured
     Box rookPosition;        // castled rook if castling
     ChessPiece currentPiece; // selected checkpiece
-    Box currentMove;         // last move
+    Box currentMove[2];         // last move
+    
     friend class ChessPiece;
 
 public:
@@ -183,12 +185,15 @@ public:
     }
     Box *get_currentMove()
     {
-        return &currentMove;
+        return currentMove;
     }
     ChessPiece *get_captured(int player)
     {
 
         return captured[player];
+    }
+    bool is_capture_move(){
+        return is_captured;
     }
 
     void print_board()
@@ -243,7 +248,7 @@ public:
     void promote_pawn(int prom)
     {
         // function to promote the pawn
-        (get_chesspiece(currentMove.x, currentMove.y)).set_rank(prom); // pawn promotion function
+        (get_chesspiece(currentMove[0].x, currentMove[0].y)).set_rank(prom); // pawn promotion function
         update_state();
     }
     void piece_selection(int y, int x)
@@ -314,7 +319,8 @@ public:
             // if legal
             if (available)
             {
-                currentMove = Box(x, y);
+                currentMove[0] = Box(x, y);
+                currentMove[1] = pice.position;
                 handle_move(pice, current); // move piece in board
 
                 if (pice.rank == 6 && sqrt(pow((pice.position.x - current.x), 2) + pow((pice.position.y - current.y), 2)) == 2)
@@ -523,7 +529,8 @@ private:
     }
 
     int handle_move(ChessPiece pc, Box b, bool legal = true)
-    {
+    {   
+        is_captured=false;
         // update chess board by moving the piece if possible
         int displacement = sqrt(pow((pc.position.x - b.x), 2) + pow((pc.position.y - b.y), 2));
         if (legal)
@@ -545,6 +552,7 @@ private:
         ChessPiece capturedpiece = chessBoard[b.x][b.y];
         if (capturedpiece.rank > 0)
         {
+            is_captured=true;
             // add to captured piece array
             captured[!pc.color][this->capture_insertIndex(!pc.color)] = capturedpiece;
         }

@@ -93,8 +93,8 @@ void PuzzleScreen::show_hint()
 }
 bool PuzzleScreen::modal_handler()
     {
-        int x = mousePos.y;
-        int y = mousePos.x;
+        int x = mousePos.x;
+        int y = mousePos.y;
         modal.is_active = false;
         int id = (modal.is_Clicked(x, y) + 1) / 2;
         if (modal.is_Clicked(x, y) % 2 == 1)

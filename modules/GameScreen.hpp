@@ -23,8 +23,6 @@ protected:
     SDL_Texture *btexture;
     bool rendering;
     bool dragging;
-    Box mousePos;
-    Modal modal;
    
 
 public:
@@ -73,15 +71,14 @@ protected:
     void render_chessgame();
     virtual void render_sidebar();
     virtual void handle_move(int, int, bool = true);
- void load_other();
  virtual void show_hint(){
 
  }
   virtual  bool modal_handler();
    virtual int button_handler()
     {
-        int x = mousePos.y;
-        int y = mousePos.x;
+        int x = mousePos.x;
+        int y = mousePos.y;
         if (resbtn.is_Clicked(x, y))
         {
             modal.is_active = true;
