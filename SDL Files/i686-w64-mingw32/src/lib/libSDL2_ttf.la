@@ -17,15 +17,15 @@ old_library='libSDL2_ttf.a'
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -lusp10 -lrpcrt4 -L/opt/local/i686-w64-mingw32/lib /opt/local/lib/libSDL2.la -ldinput8 -ldxguid -ldxerr8 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lsetupapi -lversion -luuid'
+dependency_libs=' -L/usr/local/cross-tools/i686-w64-mingw32/lib /usr/local/cross-tools/i686-w64-mingw32/lib/libfreetype.la -lz -lmingw32 -lSDL2main /usr/local/cross-tools/i686-w64-mingw32/lib/libSDL2.la -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libSDL2_ttf.
-current=2000
-age=2000
-revision=1
+current=10
+age=10
+revision=2
 
 # Is this an already installed library?
 installed=yes
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/Users/valve/release/SDL_ttf/SDL2_ttf-2.20.1/i686-w64-mingw32/lib'
+libdir='/Users/slouken/release/SDL_ttf/SDL2_ttf-2.0.12/i686-w64-mingw32/lib'
