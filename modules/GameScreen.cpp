@@ -287,7 +287,7 @@ void GameScreen::render_sidebar(){
             prect.x = lx;
             prect.y = ly;
             prect.w = dim::sidebar - 20;
-            TextureManager::render_text(mstotime(timer.get_time(!i)).c_str(), BLACK, win->render, prect, 0, 2);
+            TextureManager::render_text(mstotime(timer.get_time(!i)).c_str(), (timer.get_time(!i)<10000?RED:BLACK), win->render, prect, 0, 2);
             prect.h = 35;
             prect.w = 35;
             prect.y += (TextureManager::height / 2) - (prect.h / 2) - 4;

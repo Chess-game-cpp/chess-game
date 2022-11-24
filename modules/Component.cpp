@@ -36,7 +36,7 @@ public:
     void init(SDL_Renderer *render, std::string b_text, int bx, int by, bool hover = false, bool select = false,int sound=5)
     {
         // if(sound!=0){
-            this->sound=sounds[sound-1];
+            // this->sound=sounds[sound-1];
         // }
         this->hover = hover;
         this->select = select;
@@ -70,9 +70,9 @@ public:
     bool is_Clicked(int x, int y)
     {
         bool value=((x > button_rect.x && x < (button_rect.x + button_rect.w)) && (y > button_rect.y && y < (button_rect.y + button_rect.h)));
-        if(value && this->sound!=NULL){
-              Mix_PlayChannel( -1, this->sound, 0 );
-        }
+        // if(value && this->sound!=NULL){
+        //       Mix_PlayChannel( -1, this->sound, 0 );
+        // }
         return value ;
     }
 

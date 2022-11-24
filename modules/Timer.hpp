@@ -42,7 +42,7 @@ public:
     void switch_timer()
     {
         if(!active) return;
-        std::cout <<"hello";
+    
     int * time;
     if(current==0){
     
